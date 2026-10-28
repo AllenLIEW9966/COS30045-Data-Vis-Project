@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Console War · Video Game Industry Dashboard</title>
+        <meta
+            name="description"
+            content="Interactive D3 dashboard on the seventh-generation console war (2004-2008) plus live Steam player data."
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+
+    <body>
+        <div id="scroll-progress"></div>
+
+        <nav class="nav">
+            <div class="nav-inner">
+                <a class="brand" href="index.html"><span class="dot"></span> Allen GameDV</a>
+                <button id="nav-toggle" aria-label="Menu">☰</button>
+                <div class="nav-links" id="nav-links">
+                    <a href="#race">The race</a>
+                    <a href="#trend">Trends</a>
+                    <a href="#heat">Genres</a>
+                    <a href="#scatter">Scores</a>
+                    <a href="#steam">Steam live</a>
+                    <a href="platform.html">Explorer</a>
+                    <a href="about.html">About</a>
+                    <button id="theme-toggle">☀︎ Light</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ================= HERO ================= -->
+        <header class="hero">
+            <div>
+                <span class="eyebrow">Data Visualisation Project</span>
+                <h1>Does the best-reviewed console actually win?</h1>
+                <p class="lede">
+                    Between 2004 and 2008 five machines fought the bloodiest hardware war in gaming
+                    history — the DS, PSP, Xbox 360, Wii and PS3. Watch the lead change hands,
+                    then find out whether review scores had anything at all to do with who sold.
+                </p>
+                <div class="hero-cta">
+                    <a class="btn btn-primary" href="platform.html">🎮 Explore a platform</a>
+                    <a class="btn btn-ghost" href="#race">▶ Watch the console war</a>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi">
+                    <div class="label">Games analysed</div>
+                    <div class="value">1,212</div>
+                    <div class="sub">2004 – 2008</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Units sold</div>
+                    <div class="value">610M</div>
+                    <div class="sub">across 5 platforms</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Steam titles</div>
+                    <div class="value">2,953</div>
+                    <div class="sub">live player data</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Playing now</div>
+                    <div class="value" id="kpi-live">–</div>
+                    <div class="sub"><span class="live-dot"></span>concurrent</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= RACE ================= -->
+        <section class="section wrap reveal" id="race">
+            <div class="section-head">
+                <h2>The console war, year by year</h2>
+                <p>
+                    Cumulative software sales for each platform. The bars grow continuously and
+                    <strong>overtake each other in real time</strong> — watch the crown move as the
+                    Wii and DS surge past the machines that launched first.
+                </p>
+            </div>
+
+            <div class="card race-stage">
+                <div id="race-flash"></div>
+
+                <div class="scoreboard">
+                    <div class="sb">
+                        <span class="sb-label">Year</span>
+                        <span class="sb-val year-out" id="race-year-out">2004</span>
+                    </div>
+                    <div class="sb">
+                        <span class="sb-label">Total sold</span>
+                        <span class="sb-val" id="race-total">0M</span>
+                    </div>
+                    <div class="sb">
+                        <span class="sb-label">In the lead</span>
+                        <span class="sb-val" id="race-leader" style="font-size: 1.1rem">–</span>
+                    </div>
+                    <div id="race-beat">Press play to start the race.</div>
+                </div>
+
+                <div class="toolbar">
+                    <button class="btn btn-primary" id="race-play" style="padding: .5rem 1rem">
+                        ▶ Play the console war
+                    </button>
+                    <button class="icon-btn" id="race-replay">↺ Replay</button>
+                    <div class="seg">
+                        <button data-race-mode="cum" class="active">Cumulative</button>
+                        <button data-race-mode="annual">Per year</button>
+                    </div>
+                    <span class="ctl">
+                        Scrub <input type="range" id="race-slider" />
+                    </span>
+                    <span class="ctl">
+                        Speed
+                        <input type="range" id="race-speed" min="0.25" max="3" step="0.25" value="1" style="width: 110px" />
+                    </span>
+                </div>
+
+                <div class="chart" id="race-chart"></div>
+                <p class="chart-hint">
+                    💡 Click any bar to open that console's full profile.
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= TREND ================= -->
+        <section class="section wrap reveal" id="trend">
+            <div class="section-head">
+                <h2>How the market split</h2>
+                <p>
+                    Stack the platforms to see total market size, or switch to lines to compare them
+                    directly. Change the metric to see that
+                    <strong>the best-reviewed platform was rarely the best-selling one</strong>.
+                </p>
+            </div>
+            <div class="card">
+                <div class="toolbar">
+                    <div class="seg">
+                        <button data-trend-shape="stack" class="active">Stacked</button>
+                        <button data-trend-shape="line">Lines</button>
+                    </div>
+                    <div class="seg">
+                        <button data-trend-metric="sales_m" class="active">Sales</button>
+                        <button data-trend-metric="cum">Cumulative</button>
+                        <button data-trend-metric="titles">Titles</button>
+                        <button data-trend-metric="avg_score">Avg score</button>
+                    </div>
+                    <span class="tl-mount" id="trend-tl"></span>
+                </div>
+                <div class="chart" id="trend-chart"></div>
+                <div class="legend" id="trend-legend"></div>
+            </div>
+        </section>
+
+        <!-- ================= HEATMAP ================= -->
+        <section class="section wrap reveal" id="heat">
+            <div class="section-head">
+                <h2>Which genres belonged to which machine</h2>
+                <p>
+                    Every platform had a personality. Brighter cells mean more of that genre.
+                    Switch to <strong>average score</strong> to see where the critically loved games
+                    lived versus where the money was.
+                </p>
+            </div>
+            <div class="card">
+                <div class="toolbar">
+                    <div class="seg">
+                        <button data-heat-metric="sales_m" class="active">Sales</button>
+                        <button data-heat-metric="titles">Titles</button>
+                        <button data-heat-metric="avg_score">Avg score</button>
+                    </div>
+                    <span class="tl-mount" id="heat-tl"></span>
+                    <span class="tag" id="heat-year">all years</span>
+                </div>
+                <div class="chart" id="heat-chart"></div>
+            </div>
+        </section>
+
+        <!-- ================= SCATTER ================= -->
+        <section class="section wrap reveal" id="scatter">
+            <div class="section-head">
+                <h2>Do good reviews sell games?</h2>
+                <p>
+                    Each bubble is one game — position by review score, size by units sold.
+                    <strong>Click a platform in the legend to filter.</strong> The answer is messier
+                    than you would hope: plenty of 90-rated games sold nothing, and some of the
+                    biggest sellers reviewed badly.
+                </p>
+            </div>
+            <div class="card">
+                <div class="toolbar">
+                    <div class="seg">
+                        <button data-scatter-y="sales_m" class="active">Y: Sales</button>
+                        <button data-scatter-y="hours">Y: Story length</button>
+                    </div>
+                    <span class="tl-mount" id="scatter-tl"></span>
+                    <span class="tag" id="scatter-count"></span>
+                </div>
+                <div class="chart" id="scatter-chart"></div>
+                <div class="legend" id="scatter-legend"></div>
+            </div>
+        </section>
+
+        <!-- ================= STEAM ================= -->
+        <section class="section wrap reveal" id="steam">
+            <div class="section-head">
+                <h2><span class="live-dot"></span>What the world is playing on Steam</h2>
+                <p>
+                    A snapshot of 2,953 Steam titles pulled from the SteamSpy API. Bar colour is the
+                    positive-review percentage, so you can spot games with huge player counts but
+                    mediocre reception — and beloved games almost nobody plays.
+                </p>
+            </div>
+            <div class="card">
+                <div class="toolbar">
+                    <div class="seg">
+                        <button data-steam-metric="ccu" class="active">Players now</button>
+                        <button data-steam-metric="owners_est">Owners</button>
+                        <button data-steam-metric="reviews">Reviews</button>
+                    </div>
+                    <span class="ctl">
+                        Show top
+                        <input type="range" id="steam-n" min="5" max="30" step="1" value="15" style="width: 130px" />
+                        <span class="year-out" id="steam-n-out">15</span>
+                    </span>
+                </div>
+                <div class="chart" id="steam-chart"></div>
+            </div>
+        </section>
+
+        <!-- ================= INSIGHTS ================= -->
+        <section class="section wrap reveal">
+            <div class="grid-side">
+                <div class="card">
+                    <h3>What the data shows</h3>
+                    <ul class="insights">
+                        <li>
+                            <span class="num">1</span>
+                            <span
+                                >The Xbox 360 launched a year early and led at first — then the Wii
+                                and DS overtook it, and Nintendo never gave the lead back.</span
+                            >
+                        </li>
+                        <li>
+                            <span class="num">2</span>
+                            <span
+                                >Handhelds were not a side-show. The DS alone shipped more software
+                                than either the PS3 or Xbox 360 in this window.</span
+                            >
+                        </li>
+                        <li>
+                            <span class="num">3</span>
+                            <span
+                                >Action and Sports dominate every platform, but each machine has a
+                                distinct genre signature visible in the heatmap.</span
+                            >
+                        </li>
+                        <li>
+                            <span class="num">4</span>
+                            <span
+                                >Review score and sales correlate weakly — the scatter is a cloud,
+                                not a line. Distribution and audience beat quality.</span
+                            >
+                        </li>
+                        <li>
+                            <span class="num">5</span>
+                            <span
+                                >On Steam today, free-to-play titles hold the biggest concurrent
+                                player counts while paid $10–20 games score highest on reviews.</span
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Where the numbers come from</h3>
+                    <p style="font-size: .92rem">
+                        Historical sales, review scores and playtime come from the
+                        <strong>CORGIS Video Games dataset</strong> (1,212 titles, 2004–2008,
+                        compiled from VGChartz, Metacritic and HowLongToBeat).
+                    </p>
+                    <p style="font-size: .92rem">
+                        Live player counts, owner estimates and review ratios come from the
+                        <strong>SteamSpy API</strong>, captured for the top 3,000 titles.
+                    </p>
+                    <div class="story">
+                        <strong>Everything here is real data.</strong> Nothing was invented or
+                        filled in — see <a href="about.html">About</a> for the full method.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="wrap">
+                <div>
+                    <strong>Allen GameDV</strong> — Video Game Industry Dashboard<br />
+                    Sources: CORGIS Video Games · SteamSpy API
+                </div>
+                <div>Built with D3.js v7 · <a href="about.html">Method &amp; sources</a></div>
+            </div>
+        </footer>
+
+        <script src="js/data.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/timeline.js"></script>
+        <script src="charts/race.js"></script>
+        <script src="charts/charts.js"></script>
+        <script>
+            DATA.load().then((d) => {
+                const live = d3.sum(d.steam, (g) => g.ccu);
+                animateNumber("#kpi-live", live, fmtCompact);
+
+                /* shared year clock for trend / heatmap / scatter */
+                Timeline.setRange(d.years[0], d.years[d.years.length - 1]);
+                Timeline.mount("#trend-tl");
+                Timeline.mount("#heat-tl");
+                Timeline.mount("#scatter-tl");
+                Timeline.syncUI();
+            });
+        </script>
+    </body>
+</html>
