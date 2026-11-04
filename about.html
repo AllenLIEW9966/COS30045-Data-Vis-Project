@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>About · Method &amp; Sources</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+    <body>
+        <div id="scroll-progress"></div>
+        <nav class="nav">
+            <div class="nav-inner">
+                <a class="brand" href="index.html"><span class="dot"></span> Allen GameDV</a>
+                <button id="nav-toggle" aria-label="Menu">☰</button>
+                <div class="nav-links" id="nav-links">
+                    <a href="index.html">Dashboard</a>
+                    <a href="platform.html">Platform explorer</a>
+                    <a href="about.html" class="active">About</a>
+                    <button id="theme-toggle">☀︎ Light</button>
+                </div>
+            </div>
+        </nav>
+
+        <header class="wrap" style="padding-top: 2.6rem">
+            <span class="eyebrow">Documentation</span>
+            <h1>Method, data &amp; design decisions</h1>
+            <p class="lede">
+                Where every number comes from, how it was reshaped, and why each chart was chosen.
+                All data is real — nothing was invented, estimated or filled in.
+            </p>
+        </header>
+
+        <section class="section wrap">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Data sources</h3>
+                    <ul class="insights">
+                        <li>
+                            <span class="num">A</span>
+                            <span
+                                ><strong>CORGIS Video Games dataset</strong> — 1,212 titles released
+                                2004–2008 across five platforms, with units sold, review score,
+                                genre, publisher, ESRB rating and HowLongToBeat playtimes.
+                                Fetched from <code>corgis-edu.github.io</code>.</span
+                            >
+                        </li>
+                        <li>
+                            <span class="num">B</span>
+                            <span
+                                ><strong>SteamSpy API</strong> — live snapshot of 2,953 Steam titles
+                                with concurrent players, owner estimates, review counts and price.
+                                Pulled from <code>steamspy.com/api.php</code>.</span
+                            >
+                        </li>
+                    </ul>
+                    <div class="story" style="margin-top: .8rem">
+                        The Steam figures are a <strong>point-in-time snapshot</strong>, not a live
+                        feed. Re-run the fetch script to refresh them.
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Derived files</h3>
+                    <ul class="insights">
+                        <li><span class="num">1</span><span><code>platform_year.csv</code> — sales, titles, mean score and mean length per platform per year.</span></li>
+                        <li><span class="num">2</span><span><code>genre_year_platform.csv</code> — the three-way rollup driving the heatmap.</span></li>
+                        <li><span class="num">3</span><span><code>games.csv</code> — one row per title for the scatter plot.</span></li>
+                        <li><span class="num">4</span><span><code>publisher_year.csv</code> — top-10 publishers by total sales.</span></li>
+                        <li><span class="num">5</span><span><code>steam_games.csv</code>, <code>steam_publishers.csv</code>, <code>steam_price_buckets.csv</code> — Steam rollups.</span></li>
+                    </ul>
+                    <p style="font-size: .92rem; margin-top: .8rem">
+                        Multi-genre strings like <code>Action,Role-Playing (RPG)</code> are reduced
+                        to their primary (first) genre. Owner ranges such as
+                        <code>100,000,000 .. 200,000,000</code> are converted to their midpoint.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Why the race animates properly</h3>
+                    <p style="font-size: .93rem">
+                        A bar race is only interesting if the bars actually move and change order.
+                        This one plots <strong>cumulative</strong> sales, which always grows, and
+                        interpolates <strong>between</strong> years on a <code>requestAnimationFrame</code>
+                        loop rather than snapping from one year to the next. The result is
+                        continuous motion at any speed.
+                    </p>
+                    <p style="font-size: .93rem">
+                        A crown marks the current leader, and when the lead changes hands a banner
+                        fires. Era captions are keyed to real hardware launches so the animation
+                        tells a story rather than just moving rectangles.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Chart rationale</h3>
+                    <ul class="insights">
+                        <li><span class="num">1</span><span><strong>Bar race</strong> — rank change over time is the whole story of a console war.</span></li>
+                        <li><span class="num">2</span><span><strong>Stacked area / lines</strong> — stacked shows total market size, lines allow direct comparison. Toggle rather than pick one.</span></li>
+                        <li><span class="num">3</span><span><strong>Heatmap</strong> — the natural encoding for a genre × platform matrix.</span></li>
+                        <li><span class="num">4</span><span><strong>Scatter</strong> — the only honest way to show a weak correlation; a bar chart would hide the spread.</span></li>
+                        <li><span class="num">5</span><span><strong>Ranked bars with colour-encoded rating</strong> — two variables (popularity and reception) in one readable chart.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.2rem">
+                <h3>Running it</h3>
+                <p style="font-size: .93rem">
+                    No build step. Because charts use <code>d3.csv()</code>, the folder must be
+                    served over HTTP — opening the file from disk shows a warning screen instead of
+                    empty charts.
+                </p>
+                <pre style="background: var(--surface-2); padding: .9rem 1rem; border-radius: 10px; overflow: auto; font-size: .88rem"><code>cd "Allen GameDV"
+python -m http.server 8000
+# open http://localhost:8000</code></pre>
+                <p style="font-size: .93rem">Or just double-click <code>START HERE.bat</code>.</p>
+            </div>
+
+            <div class="card" style="margin-top: 1.2rem">
+                <h3>Limitations</h3>
+                <p style="font-size: .93rem">
+                    The CORGIS dataset covers 2004–2008 only, so this is a study of the seventh
+                    console generation rather than the whole industry. It is also skewed toward
+                    titles that received Metacritic coverage, meaning very small releases are
+                    under-represented. Steam owner counts are SteamSpy estimates derived from
+                    review ratios, not figures published by Valve, and should be read as
+                    order-of-magnitude rather than exact.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <div class="wrap">
+                <div><strong>Allen GameDV</strong> — Video Game Industry Dashboard</div>
+                <div>D3.js v7 · static site</div>
+            </div>
+        </footer>
+        <script src="js/ui.js"></script>
+    </body>
+</html>
