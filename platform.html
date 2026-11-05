@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Platform Explorer · Console Deep Dive</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+
+    <body id="pf-page">
+        <div id="scroll-progress"></div>
+
+        <nav class="nav">
+            <div class="nav-inner">
+                <a class="brand" href="index.html"><span class="dot"></span> Allen GameDV</a>
+                <button id="nav-toggle" aria-label="Menu">☰</button>
+                <div class="nav-links" id="nav-links">
+                    <a href="index.html">Dashboard</a>
+                    <a href="platform.html" class="active">Platform explorer</a>
+                    <a href="about.html">About</a>
+                    <button id="theme-toggle">☀︎ Light</button>
+                </div>
+            </div>
+        </nav>
+
+        <header class="wrap" style="padding-top: 2.2rem">
+            <span class="eyebrow">Deep dive</span>
+            <h1 style="margin-bottom: .4rem">
+                <span id="pf-name">–</span>
+            </h1>
+            <p class="tag" id="pf-maker" style="margin-bottom: 1rem">–</p>
+            <div id="pf-pills" class="pill-row"></div>
+            <p class="lede" id="pf-blurb" style="margin-top: 1.1rem"></p>
+        </header>
+
+        <!-- KPI cards -->
+        <section class="wrap">
+            <div class="kpi-grid" style="margin-bottom: 1.4rem">
+                <div class="kpi">
+                    <div class="label">Total software</div>
+                    <div class="value" id="pf-kpi-sales">–</div>
+                    <div class="sub">units sold 2004–2008</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Tracked titles</div>
+                    <div class="value" id="pf-kpi-titles">–</div>
+                    <div class="sub">in this dataset</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Avg review score</div>
+                    <div class="value" id="pf-kpi-score">–</div>
+                    <div class="sub">out of 100</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Share of generation</div>
+                    <div class="value" id="pf-kpi-share">–</div>
+                    <div class="sub">of all 5 platforms</div>
+                </div>
+                <div class="kpi" style="grid-column: span 2">
+                    <div class="label">Best-selling game</div>
+                    <div class="value" id="pf-kpi-best" style="font-size: 1.25rem">–</div>
+                    <div class="sub" id="pf-kpi-best-sub"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- yearly + genre -->
+        <section class="section wrap">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Software sales by year</h3>
+                    <div class="chart" id="pf-year-chart"></div>
+                </div>
+                <div class="card">
+                    <h3>Genre mix</h3>
+                    <div class="chart" id="pf-genre-chart"></div>
+                    <div class="legend" id="pf-genre-legend"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- head to head -->
+        <section class="section wrap">
+            <div class="card">
+                <div class="section-head" style="margin-bottom: .8rem">
+                    <h3 style="margin-bottom: .3rem">
+                        Head to head: <span id="pf-vs-a">–</span> vs <span id="pf-vs-b">–</span>
+                    </h3>
+                    <p style="margin: 0">Cumulative software sales, drawn as the generation unfolds.</p>
+                </div>
+                <div class="toolbar">
+                    <span class="ctl">
+                        Compare against
+                        <select id="pf-rival" class="select"></select>
+                    </span>
+                    <span class="tag" id="pf-vs-verdict"></span>
+                </div>
+                <div class="chart" id="pf-vs-chart"></div>
+            </div>
+        </section>
+
+        <!-- ratings + table -->
+        <section class="section wrap">
+            <div class="card" style="margin-bottom: 1.2rem">
+                <h3>Audience rating split (ESRB)</h3>
+                <p style="font-size: .9rem; color: var(--ink-2); margin-top: -.3rem">
+                    Sales by content rating — a quick read on who each console was really for.
+                </p>
+                <div class="chart" id="pf-rating-chart"></div>
+            </div>
+
+            <div class="card">
+                <h3>Top 20 games</h3>
+                <p style="font-size: .9rem; color: var(--ink-2); margin-top: -.3rem">
+                    Click any column header to re-sort.
+                </p>
+                <div class="table-wrap">
+                    <table id="pf-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th data-key="year">Year</th>
+                                <th>Genre</th>
+                                <th>Publisher</th>
+                                <th data-key="sales_m" class="num sorted" data-dir="desc">Sales</th>
+                                <th data-key="score" class="num">Score</th>
+                                <th data-key="hours" class="num">Length</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="wrap">
+                <div><strong>Allen GameDV</strong> — Platform Explorer</div>
+                <div><a href="index.html">← Back to dashboard</a> · <a href="about.html">Method</a></div>
+            </div>
+        </footer>
+
+        <script src="js/data.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="charts/platform.js"></script>
+    </body>
+</html>
