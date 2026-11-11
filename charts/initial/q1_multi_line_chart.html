@@ -1,78 +1,240 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Q1: National & State Road Crash Hospitalisation Trends (2012–2021)</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Q1: State Road Crash Trends (2012–2021) - D3.js</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 20px; background-color: #f8fafc; }
-    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 1100px; margin: 0 auto; }
-    h2 { margin-top: 0; color: #1e293b; }
-    p { color: #64748b; font-size: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 20px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1e293b;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .axis line, .axis path {
+      stroke: #cbd5e1;
+    }
+    .axis text {
+      fill: #475569;
+      font-size: 12px;
+    }
+    .grid line {
+      stroke: #f1f5f9;
+      stroke-opacity: 0.8;
+      shape-rendering: crispEdges;
+    }
+    .line {
+      fill: none;
+      stroke-width: 2.5;
+      transition: opacity 0.2s;
+    }
+    .dot {
+      cursor: pointer;
+      transition: r 0.2s;
+    }
+    .dot:hover {
+      r: 6;
+    }
+    .d3-tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #ffffff;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
+    .legend-item {
+      cursor: pointer;
+      user-select: none;
+    }
+    .legend-item:hover text {
+      font-weight: bold;
+    }
+    .legend-item.disabled text {
+      fill: #94a3b8;
+      text-decoration: line-through;
+    }
+    .legend-item.disabled rect {
+      fill: #cbd5e1 !important;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>National & State Road Crash Hospitalisation Trends (2012–2021)</h2>
-  <p>💡 <b>Interactive Tip:</b> Click any legend item to toggle state visibility; double-click a state to isolate its trend; hover over data points for detailed figures.</p>
-  <div id="lineChart" style="width:100%; height:620px;"></div>
+  <h2>State & Territory Road Crash Hospitalisation Trends (2012–2021)</h2>
+  <p class="subtitle">💡 <b>Interactive D3 Chart:</b> Click legend items on the right to toggle individual states. Hover over markers to view exact hospitalisations.</p>
+  <div id="chart-container"></div>
 </div>
 
 <script>
-  const years = ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021'];
-
-  const seriesData = [
-    { name: 'NSW', values: [11121, 11421, 11313, 11084, 11474, 11016, 9794, 9942, 9274, 9003], color: '#2563eb' },
-    { name: 'Vic', values: [8098, 7784, 8523, 9198, 10360, 10794, 11453, 11392, 9884, 11130], color: '#059669' },
-    { name: 'Qld', values: [6813, 7821, 7725, 8306, 8702, 9134, 9381, 9515, 9801, 10447], color: '#d97706' },
-    { name: 'WA', values: [3493, 3475, 3154, 3183, 3031, 3195, 3274, 3534, 3636, 3568], color: '#dc2626' },
-    { name: 'SA', values: [2311, 2221, 2381, 2467, 2654, 2394, 2489, 2457, 2503, 2632], color: '#7c3aed' },
-    { name: 'Tas', values: [536, 570, 646, 677, 657, 659, 781, 708, 778, 805], color: '#0891b2' },
-    { name: 'ACT', values: [601, 573, 542, 700, 654, 632, 712, 665, 629, 740], color: '#db2777' },
-    { name: 'NT', values: [496, 561, 575, 691, 709, 703, 832, 656, 787, 710], color: '#ea580c' },
-    { name: 'Australia (National)', values: [34024, 35001, 35515, 37082, 38963, 39339, 39590, 39866, 37966, 39505], color: '#0f172a', dash: 'dash', width: 3.5 }
+  const rawData = [
+    { year: 2012, NSW: 11121, Vic: 8098, Qld: 6813, WA: 3493, SA: 2311, Tas: 536, NT: 496, ACT: 601 },
+    { year: 2013, NSW: 11421, Vic: 7784, Qld: 7821, WA: 3475, SA: 2221, Tas: 570, NT: 561, ACT: 573 },
+    { year: 2014, NSW: 11313, Vic: 8523, Qld: 7725, WA: 3154, SA: 2381, Tas: 646, NT: 575, ACT: 542 },
+    { year: 2015, NSW: 11084, Vic: 9198, Qld: 8306, WA: 3183, SA: 2467, Tas: 677, NT: 691, ACT: 700 },
+    { year: 2016, NSW: 11474, Vic: 10360, Qld: 8702, WA: 3031, SA: 2654, Tas: 657, NT: 709, ACT: 654 },
+    { year: 2017, NSW: 11016, Vic: 10794, Qld: 9134, WA: 3195, SA: 2394, Tas: 659, NT: 703, ACT: 632 },
+    { year: 2018, NSW: 9794, Vic: 11453, Qld: 9381, WA: 3274, SA: 2489, Tas: 781, NT: 832, ACT: 712 },
+    { year: 2019, NSW: 9942, Vic: 11392, Qld: 9515, WA: 3534, SA: 2457, Tas: 708, NT: 656, ACT: 665 },
+    { year: 2020, NSW: 9274, Vic: 9884, Qld: 9801, WA: 3636, SA: 2503, Tas: 778, NT: 787, ACT: 629 },
+    { year: 2021, NSW: 9003, Vic: 11130, Qld: 10447, WA: 3568, SA: 2632, Tas: 805, NT: 710, ACT: 740 }
   ];
 
-  const traces = seriesData.map(item => ({
-    x: years,
-    y: item.values,
-    mode: 'lines+markers',
-    name: item.name,
-    line: {
-      color: item.color,
-      width: item.width || 2,
-      dash: item.dash || 'solid'
-    },
-    marker: { size: 6 },
-    hovertemplate: `<b>${item.name}</b><br>Year: %{x}<br>Hospitalisations: %{y:,}<extra></extra>`
+  const jurisdictions = ["NSW", "Vic", "Qld", "WA", "SA", "Tas", "ACT", "NT"];
+
+  const series = jurisdictions.map(key => ({
+    name: key,
+    values: rawData.map(d => ({ year: d.year, value: d[key] })),
+    visible: true
   }));
 
-  const layout = {
-    title: {
-      text: 'Road Crash Hospitalisations Across Australian States (2012–2021)',
-      font: { size: 18, color: '#1e293b' }
-    },
-    xaxis: {
-      title: 'Calendar Year',
-      gridcolor: '#e2e8f0',
-      dtick: 1
-    },
-    yaxis: {
-      title: 'Number of Hospitalisations',
-      gridcolor: '#e2e8f0'
-    },
-    legend: {
-      orientation: 'v',
-      x: 1.02,
-      y: 1
-    },
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    hovermode: 'closest'
-  };
+  const margin = { top: 30, right: 130, bottom: 50, left: 65 };
+  const width = 960 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
 
-  Plotly.newPlot('lineChart', traces, layout, { responsive: true });
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const colorScale = d3.scaleOrdinal()
+    .domain(jurisdictions)
+    .range(["#2563eb", "#059669", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#db2777", "#ea580c"]);
+
+  const x = d3.scaleLinear()
+    .domain(d3.extent(rawData, d => d.year))
+    .range([0, width]);
+
+  const y = d3.scaleLinear()
+    .domain([0, 13000])
+    .nice()
+    .range([height, 0]);
+
+  svg.append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).ticks(10).tickFormat(d3.format("d")));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .call(d3.axisLeft(y).ticks(8).tickFormat(d => (d >= 1000 ? `${d / 1000}k` : d)));
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height + 42)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Calendar Year");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -50)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Number of Hospitalisations");
+
+  const lineGenerator = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.value))
+    .curve(d3.curveMonotoneX);
+
+  // Tooltip
+  const tooltip = d3.select("body").append("div").attr("class", "d3-tooltip");
+
+  const lineGroups = svg.selectAll(".series-group")
+    .data(series)
+    .enter()
+    .append("g")
+    .attr("class", d => `series-group group-${d.name}`);
+
+  lineGroups.append("path")
+    .attr("class", "line")
+    .attr("d", d => lineGenerator(d.values))
+    .attr("stroke", d => colorScale(d.name));
+
+  lineGroups.selectAll(".dot")
+    .data(d => d.values.map(v => ({ ...v, name: d.name })))
+    .enter()
+    .append("circle")
+    .attr("class", "dot")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d.value))
+    .attr("r", 4)
+    .attr("fill", d => colorScale(d.name))
+    .on("mouseover", (event, d) => {
+      tooltip.style("opacity", 1)
+        .html(`<b>${d.name}</b><br>Year: ${d.year}<br>Hospitalisations: ${d.value.toLocaleString()}`);
+    })
+    .on("mousemove", event => {
+      tooltip.style("left", (event.pageX + 12) + "px")
+             .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", () => tooltip.style("opacity", 0));
+
+  const legend = svg.append("g")
+    .attr("transform", `translate(${width + 25}, 15)`);
+
+  const legendItems = legend.selectAll(".legend-item")
+    .data(series)
+    .enter()
+    .append("g")
+    .attr("class", "legend-item")
+    .attr("transform", (d, i) => `translate(0, ${i * 26})`)
+    .on("click", function(event, d) {
+      d.visible = !d.visible;
+      d3.select(this).classed("disabled", !d.visible);
+      svg.select(`.group-${d.name}`)
+        .transition()
+        .duration(200)
+        .style("opacity", d.visible ? 1 : 0)
+        .style("pointer-events", d.visible ? "all" : "none");
+    });
+
+  legendItems.append("rect")
+    .attr("width", 14)
+    .attr("height", 14)
+    .attr("rx", 3)
+    .attr("fill", d => colorScale(d.name));
+
+  legendItems.append("text")
+    .attr("x", 20)
+    .attr("y", 11)
+    .attr("fill", "#334155")
+    .attr("font-size", "12px")
+    .text(d => d.name);
 </script>
 </body>
 </html>

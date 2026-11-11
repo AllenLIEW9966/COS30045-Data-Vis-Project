@@ -1,88 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Q2: Road Trauma Hospitalisations by Age Cohort & Gender (2021)</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Q2: Age Cohort & Gender Vulnerability (D3.js)</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 20px; background-color: #f8fafc; }
-    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 1100px; margin: 0 auto; }
-    h2 { margin-top: 0; color: #1e293b; }
-    p { color: #64748b; font-size: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 20px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1e293b;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .axis line, .axis path {
+      stroke: #cbd5e1;
+    }
+    .axis text {
+      fill: #475569;
+      font-size: 12px;
+    }
+    .grid line {
+      stroke: #f1f5f9;
+      stroke-opacity: 0.8;
+      shape-rendering: crispEdges;
+    }
+    .bar {
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .bar:hover {
+      opacity: 0.82;
+    }
+    .d3-tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #ffffff;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>Age Cohort & Gender Vulnerability in Serious Road Trauma (2021)</h2>
-  <p>💡 <b>Interactive Tip:</b> Click the legend to toggle Male or Female data; hover over bars to inspect hospitalisation counts and gender distribution per age group.</p>
-  <div id="barChart" style="width:100%; height:600px;"></div>
+  <h2>Age Cohort & Gender Vulnerability in Road Trauma (Australia, 2021)</h2>
+  <p class="subtitle">💡 <b>Interactive D3 Chart:</b> Hover over individual bars to inspect demographic counts and sex distributions across age cohorts.</p>
+  <div id="chart-container"></div>
 </div>
 
 <script>
-  
-  const ageGroups = ['0-7', '8-16', '17-25', '26-39', '40-64', '65-74', '75+'];
+  const data = [
+    { ageGroup: '0-7',   Male: 416,  Female: 291 },
+    { ageGroup: '8-16',  Male: 2150, Female: 713 },
+    { ageGroup: '17-25', Male: 5226, Female: 2783 },
+    { ageGroup: '26-39', Male: 6186, Female: 3237 },
+    { ageGroup: '40-64', Male: 8702, Female: 4324 },
+    { ageGroup: '65-74', Male: 1795, Female: 1223 },
+    { ageGroup: '75+',   Male: 1313, Female: 1145 }
+  ];
 
-  
-  const maleCounts   = [416, 2150, 5226, 6186, 8702, 1795, 1313];
-  const femaleCounts = [291,  713, 2783, 3237, 4324, 1223, 1145];
+  const subgroups = ['Male', 'Female'];
+  const groups = data.map(d => d.ageGroup);
 
-  // 男性柱状图配置
-  const traceMale = {
-    x: ageGroups,
-    y: maleCounts,
-    name: 'Male',
-    type: 'bar',
-    marker: {
-      color: '#2563eb',
-      line: { color: '#1d4ed8', width: 1.5 }
-    },
-    hovertemplate: '<b>Age Group: %{x}</b><br>Gender: Male<br>Hospitalisations: %{y:,}<extra></extra>'
-  };
+  const margin = { top: 30, right: 30, bottom: 50, left: 65 };
+  const width = 920 - margin.left - margin.right;
+  const height = 480 - margin.top - margin.bottom;
 
-  const traceFemale = {
-    x: ageGroups,
-    y: femaleCounts,
-    name: 'Female',
-    type: 'bar',
-    marker: {
-      color: '#ec4899',
-      line: { color: '#db2777', width: 1.5 }
-    },
-    hovertemplate: '<b>Age Group: %{x}</b><br>Gender: Female<br>Hospitalisations: %{y:,}<extra></extra>'
-  };
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  const data = [traceMale, traceFemale];
+  const x0 = d3.scaleBand()
+    .domain(groups)
+    .range([0, width])
+    .paddingInner(0.25);
 
-  const layout = {
-    title: {
-      text: 'Road Crash Hospitalisations Across Age Groups by Gender (Australia, 2021)',
-      font: { size: 18, color: '#1e293b' }
-    },
-    xaxis: {
-      title: 'Age Group (Years)',
-      tickfont: { size: 13, color: '#475569' }
-    },
-    yaxis: {
-      title: 'Number of Hospitalisations',
-      gridcolor: '#e2e8f0',
-      zerolinecolor: '#cbd5e1'
-    },
-    barmode: 'group',
-    bargap: 0.25,
-    bargroupgap: 0.1,
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff',
-    legend: {
-      x: 0.88,
-      y: 0.98,
-      bgcolor: 'rgba(255,255,255,0.8)',
-      bordercolor: '#cbd5e1',
-      borderwidth: 1
-    }
-  };
+  const x1 = d3.scaleBand()
+    .domain(subgroups)
+    .range([0, x0.bandwidth()])
+    .padding(0.08);
 
-  Plotly.newPlot('barChart', data, layout, { responsive: true });
+  const y = d3.scaleLinear()
+    .domain([0, 9500])
+    .nice()
+    .range([height, 0]);
+
+  const color = d3.scaleOrdinal()
+    .domain(subgroups)
+    .range(['#2563eb', '#ec4899']);
+
+  svg.append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x0));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .call(d3.axisLeft(y).ticks(8).tickFormat(d => (d >= 1000 ? `${d / 1000}k` : d)));
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height + 42)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Age Group (Years)");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -50)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Number of Hospitalisations");
+
+  const tooltip = d3.select("body").append("div").attr("class", "d3-tooltip");
+
+  svg.append("g")
+    .selectAll("g")
+    .data(data)
+    .enter()
+    .append("g")
+      .attr("transform", d => `translate(${x0(d.ageGroup)}, 0)`)
+    .selectAll("rect")
+    .data(d => subgroups.map(key => ({ key: key, value: d[key], ageGroup: d.ageGroup })))
+    .enter()
+    .append("rect")
+      .attr("class", "bar")
+      .attr("x", d => x1(d.key))
+      .attr("y", height) 
+      .attr("width", x1.bandwidth())
+      .attr("height", 0)
+      .attr("rx", 3) 
+      .attr("fill", d => color(d.key))
+      .on("mouseover", (event, d) => {
+        tooltip.style("opacity", 1)
+          .html(`<b>Age Group: ${d.ageGroup}</b><br>Sex: ${d.key}<br>Hospitalisations: ${d.value.toLocaleString()}`);
+      })
+      .on("mousemove", event => {
+        tooltip.style("left", (event.pageX + 12) + "px")
+               .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", () => tooltip.style("opacity", 0))
+      .transition()
+      .duration(750)
+      .delay((d, i) => i * 100)
+      .attr("y", d => y(d.value))
+      .attr("height", d => height - y(d.value));
+
+  const legend = svg.append("g")
+    .attr("transform", `translate(${width - 120}, 10)`);
+
+  subgroups.forEach((key, i) => {
+    const legendRow = legend.append("g")
+      .attr("transform", `translate(0, ${i * 22})`);
+
+    legendRow.append("rect")
+      .attr("width", 14)
+      .attr("height", 14)
+      .attr("rx", 3)
+      .attr("fill", color(key));
+
+    legendRow.append("text")
+      .attr("x", 22)
+      .attr("y", 11)
+      .attr("fill", "#334155")
+      .attr("font-size", "13px")
+      .text(key);
+  });
 </script>
 </body>
 </html>

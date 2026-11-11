@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Australian State Trauma Explorer & Multi-Region Comparator (D3.js)</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 20px;
+      color: #1e293b;
+    }
+    .card {
+      background: #ffffff;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: #f1f5f9;
+      padding: 16px;
+      border-radius: 10px;
+      border-left: 4px solid #2563eb;
+    }
+    .metric-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metric-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0f172a;
+      margin-top: 4px;
+    }
+    .metric-desc {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 2px;
+    }
+    .filter-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filter-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .filter-actions button {
+      background: none;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: all 0.15s ease;
+    }
+    .filter-actions button:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .chip.active {
+      color: #ffffff;
+    }
+    .chip.inactive {
+      background: #f8fafc !important;
+      color: #94a3b8 !important;
+      border-color: #e2e8f0 !important;
+    }
+    .chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .toggle-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .toggle-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+    .axis line, .axis path {
+      stroke: #cbd5e1;
+    }
+    .axis text {
+      fill: #475569;
+      font-size: 12px;
+    }
+    .grid line {
+      stroke: #f1f5f9;
+      stroke-opacity: 0.8;
+      shape-rendering: crispEdges;
+    }
+    .line {
+      fill: none;
+      stroke-width: 2.5;
+    }
+    .line.national-line {
+      stroke-dasharray: 6 4;
+      stroke-width: 3.5;
+    }
+    .line-overall {
+      fill: none;
+      stroke: #0f172a;
+      stroke-width: 3.5;
+    }
+    .area-overall {
+      fill: #0f172a;
+      opacity: 0.05;
+    }
+    .dot {
+      cursor: pointer;
+      transition: r 0.2s;
+    }
+    .dot:hover {
+      r: 6.5;
+    }
+    .d3-tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      color: #ffffff;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>State Road Crash Explorer & Regional Comparator (2012–2021)</h2>
+  <p class="subtitle">💡 <b>Interactive Comparator:</b> Select individual states or Australia (National) to compare trajectories, or switch to view the combined aggregate total.</p>
+
+  <div class="metrics-row">
+    <div class="metric-card" style="border-left-color: #2563eb;">
+      <div class="metric-label">2021 Selected Trauma</div>
+      <div class="metric-value" id="metric-total">-</div>
+      <div class="metric-desc" id="metric-share">Across selected selection</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #059669;">
+      <div class="metric-label">10-Year Net Trajectory</div>
+      <div class="metric-value" id="metric-change">-</div>
+      <div class="metric-desc">Percentage change (2012 vs 2021)</div>
+    </div>
+    <div class="metric-card" style="border-left-color: #d97706;">
+      <div class="metric-label">National Share (2021)</div>
+      <div class="metric-value" id="metric-nat-pct">-</div>
+      <div class="metric-desc">Proportion of national total (39,505)</div>
+    </div>
+  </div>
+
+  <div class="filter-section">
+    <div class="filter-header">
+      <span class="filter-title">Select Jurisdictions to Compare / Aggregate:</span>
+      <div class="filter-actions">
+        <button id="btn-national-only">National Total</button>
+        <button id="btn-select-all">All States</button>
+        <button id="btn-east-coast">East Coast (NSW+Vic+Qld)</button>
+        <button id="btn-clear-all">Reset (NSW)</button>
+      </div>
+    </div>
+    <div class="chips-container" id="chips-container"></div>
+  </div>
+
+  <div class="view-toggle">
+    <button class="toggle-btn active" id="btn-mode-compare">Multi-Region Comparison View</button>
+    <button class="toggle-btn" id="btn-mode-overall">Selected Aggregated Overall Trend</button>
+  </div>
+
+  <div id="chart-container"></div>
+</div>
+
+<script>
+  const rawData = [
+    { year: 2012, Australia: 34024, NSW: 11121, Vic: 8098, Qld: 6813, WA: 3493, SA: 2311, Tas: 536, NT: 496, ACT: 601 },
+    { year: 2013, Australia: 35001, NSW: 11421, Vic: 7784, Qld: 7821, WA: 3475, SA: 2221, Tas: 570, NT: 561, ACT: 573 },
+    { year: 2014, Australia: 35515, NSW: 11313, Vic: 8523, Qld: 7725, WA: 3154, SA: 2381, Tas: 646, NT: 575, ACT: 542 },
+    { year: 2015, Australia: 37082, NSW: 11084, Vic: 9198, Qld: 8306, WA: 3183, SA: 2467, Tas: 677, NT: 691, ACT: 700 },
+    { year: 2016, Australia: 38963, NSW: 11474, Vic: 10360, Qld: 8702, WA: 3031, SA: 2654, Tas: 657, NT: 709, ACT: 654 },
+    { year: 2017, Australia: 39339, NSW: 11016, Vic: 10794, Qld: 9134, WA: 3195, SA: 2394, Tas: 659, NT: 703, ACT: 632 },
+    { year: 2018, Australia: 39590, NSW: 9794, Vic: 11453, Qld: 9381, WA: 3274, SA: 2489, Tas: 781, NT: 832, ACT: 712 },
+    { year: 2019, Australia: 39866, NSW: 9942, Vic: 11392, Qld: 9515, WA: 3534, SA: 2457, Tas: 708, NT: 656, ACT: 665 },
+    { year: 2020, Australia: 37966, NSW: 9274, Vic: 9884, Qld: 9801, WA: 3636, SA: 2503, Tas: 778, NT: 787, ACT: 629 },
+    { year: 2021, Australia: 39505, NSW: 9003, Vic: 11130, Qld: 10447, WA: 3568, SA: 2632, Tas: 805, NT: 710, ACT: 740 }
+  ];
+
+  const nationalTotal2021 = 39505;
+
+  const allJurisdictions = ["Australia", "NSW", "Vic", "Qld", "WA", "SA", "Tas", "ACT", "NT"];
+  const individualStates = ["NSW", "Vic", "Qld", "WA", "SA", "Tas", "ACT", "NT"];
+
+  const stateColors = {
+    Australia: "#0f172a",
+    NSW: "#2563eb",
+    Vic: "#059669",
+    Qld: "#d97706",
+    WA: "#dc2626",
+    SA: "#7c3aed",
+    Tas: "#0891b2",
+    ACT: "#db2777",
+    NT: "#ea580c"
+  };
+
+  let selectedStates = new Set(["Australia", "NSW"]);
+  let currentMode = "compare";
+
+  const margin = { top: 30, right: 30, bottom: 50, left: 65 };
+  const width = 1000 - margin.left - margin.right;
+  const height = 480 - margin.top - margin.bottom;
+
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const gridG = svg.append("g").attr("class", "grid");
+  const xAxisG = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`);
+  const yAxisG = svg.append("g").attr("class", "axis");
+  const contentG = svg.append("g").attr("class", "content");
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height + 42)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Calendar Year");
+
+  const yLabel = svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -50)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Hospitalisations");
+
+  const tooltip = d3.select("body").append("div").attr("class", "d3-tooltip");
+
+  const chipsContainer = d3.select("#chips-container");
+  
+  allJurisdictions.forEach(st => {
+    const chip = chipsContainer.append("div")
+      .attr("class", `chip ${selectedStates.has(st) ? 'active' : 'inactive'}`)
+      .attr("id", `chip-${st}`)
+      .style("background", selectedStates.has(st) ? stateColors[st] : "#f8fafc")
+      .style("border-color", stateColors[st])
+      .on("click", () => toggleState(st));
+
+    chip.append("span").attr("class", "chip-dot");
+    chip.append("span").text(st === "Australia" ? "Australia (National)" : st);
+  });
+
+  function toggleState(st) {
+    if (selectedStates.has(st)) {
+      if (selectedStates.size > 1) {
+        selectedStates.delete(st);
+      }
+    } else {
+      selectedStates.add(st);
+    }
+    updateChipsUI();
+    updateDashboard();
+  }
+
+  function updateChipsUI() {
+    allJurisdictions.forEach(st => {
+      const active = selectedStates.has(st);
+      d3.select(`#chip-${st}`)
+        .attr("class", `chip ${active ? 'active' : 'inactive'}`)
+        .style("background", active ? stateColors[st] : "#f8fafc");
+    });
+  }
+
+  d3.select("#btn-national-only").on("click", () => {
+    selectedStates = new Set(["Australia"]);
+    updateChipsUI();
+    updateDashboard();
+  });
+
+  d3.select("#btn-select-all").on("click", () => {
+    selectedStates = new Set(individualStates);
+    updateChipsUI();
+    updateDashboard();
+  });
+
+  d3.select("#btn-clear-all").on("click", () => {
+    selectedStates = new Set(["NSW"]);
+    updateChipsUI();
+    updateDashboard();
+  });
+
+  d3.select("#btn-east-coast").on("click", () => {
+    selectedStates = new Set(["NSW", "Vic", "Qld"]);
+    updateChipsUI();
+    updateDashboard();
+  });
+
+  d3.select("#btn-mode-compare").on("click", function() {
+    currentMode = "compare";
+    d3.selectAll(".toggle-btn").classed("active", false);
+    d3.select(this).classed("active", true);
+    updateDashboard();
+  });
+
+  d3.select("#btn-mode-overall").on("click", function() {
+    currentMode = "overall";
+    d3.selectAll(".toggle-btn").classed("active", false);
+    d3.select(this).classed("active", true);
+    updateDashboard();
+  });
+
+  function updateDashboard() {
+    const activeList = Array.from(selectedStates);
+
+    let total2012 = 0;
+    let total2021 = 0;
+
+    if (activeList.includes("Australia") && activeList.length === 1) {
+      total2012 = rawData.find(d => d.year === 2012).Australia;
+      total2021 = rawData.find(d => d.year === 2021).Australia;
+    } else {
+      const stateOnly = activeList.filter(s => s !== "Australia");
+      const listToSum = stateOnly.length > 0 ? stateOnly : ["Australia"];
+      
+      rawData.forEach(row => {
+        if (row.year === 2012) listToSum.forEach(st => total2012 += row[st]);
+        if (row.year === 2021) listToSum.forEach(st => total2021 += row[st]);
+      });
+    }
+
+    const netChange = (((total2021 - total2012) / total2012) * 100).toFixed(1);
+    const natShare = Math.min(100, ((total2021 / nationalTotal2021) * 100)).toFixed(1);
+
+    d3.select("#metric-total").text(total2021.toLocaleString());
+    d3.select("#metric-share").text(activeList.includes("Australia") && activeList.length === 1 
+      ? "Official National Aggregate" 
+      : `Across ${activeList.filter(s => s !== 'Australia').length || 1} selected jurisdiction(s)`);
+    
+    d3.select("#metric-change")
+      .text(`${netChange > 0 ? '+' : ''}${netChange}%`)
+      .style("color", netChange > 0 ? "#dc2626" : "#059669");
+    d3.select("#metric-nat-pct").text(`${natShare}%`);
+
+    const x = d3.scaleLinear().domain([2012, 2021]).range([0, width]);
+
+    let yMax = 0;
+    if (currentMode === "overall") {
+      const stateOnly = activeList.filter(s => s !== "Australia");
+      const listToSum = stateOnly.length > 0 ? stateOnly : ["Australia"];
+      const annualSums = rawData.map(d => d3.sum(listToSum, st => d[st]));
+      yMax = d3.max(annualSums) * 1.12;
+    } else {
+      const maxValues = activeList.map(st => d3.max(rawData, d => d[st]));
+      yMax = (d3.max(maxValues) || 1000) * 1.15;
+    }
+
+    const y = d3.scaleLinear().domain([0, yMax]).nice().range([height, 0]);
+
+    gridG.transition().duration(600).call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+    xAxisG.call(d3.axisBottom(x).ticks(10).tickFormat(d3.format("d")));
+    yAxisG.transition().duration(600).call(d3.axisLeft(y).ticks(8).tickFormat(d => (d >= 1000 ? `${d / 1000}k` : d)));
+
+    yLabel.text(currentMode === "overall" ? "Aggregated Hospitalisations" : "Hospitalisations");
+
+
+    contentG.selectAll("*").remove();
+
+    const lineGen = d3.line()
+      .x(d => x(d.year))
+      .y(d => y(d.value))
+      .curve(d3.curveMonotoneX);
+
+    if (currentMode === "overall") {
+
+      const stateOnly = activeList.filter(s => s !== "Australia");
+      const listToSum = stateOnly.length > 0 ? stateOnly : ["Australia"];
+
+      const aggregatedSeries = rawData.map(d => ({
+        year: d.year,
+        value: d3.sum(listToSum, st => d[st])
+      }));
+
+      const areaGen = d3.area()
+        .x(d => x(d.year))
+        .y0(height)
+        .y1(d => y(d.value))
+        .curve(d3.curveMonotoneX);
+
+      contentG.append("path")
+        .datum(aggregatedSeries)
+        .attr("class", "area-overall")
+        .attr("d", areaGen);
+
+      contentG.append("path")
+        .datum(aggregatedSeries)
+        .attr("class", "line-overall")
+        .attr("d", lineGen);
+
+      contentG.selectAll(".dot")
+        .data(aggregatedSeries)
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .attr("cx", d => x(d.year))
+        .attr("cy", d => y(d.value))
+        .attr("r", 5)
+        .attr("fill", "#0f172a")
+        .on("mouseover", (event, d) => {
+          tooltip.style("opacity", 1)
+            .html(`<b>Combined Total</b><br>Year: ${d.year}<br>Hospitalisations: <b>${d.value.toLocaleString()}</b><br>Included: ${listToSum.join(', ')}`);
+        })
+        .on("mousemove", event => {
+          tooltip.style("left", (event.pageX + 12) + "px").style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", () => tooltip.style("opacity", 0));
+
+    } else {
+      activeList.forEach(st => {
+        const stateData = rawData.map(d => ({ year: d.year, value: d[st] }));
+        const isNational = st === "Australia";
+
+        const group = contentG.append("g").attr("class", `state-group-${st}`);
+
+        group.append("path")
+          .datum(stateData)
+          .attr("class", isNational ? "line national-line" : "line")
+          .attr("stroke", stateColors[st])
+          .attr("d", lineGen);
+
+        group.selectAll(".dot")
+          .data(stateData)
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .attr("cx", d => x(d.year))
+          .attr("cy", d => y(d.value))
+          .attr("r", isNational ? 5 : 4)
+          .attr("fill", stateColors[st])
+          .on("mouseover", (event, d) => {
+            tooltip.style("opacity", 1)
+              .html(`<b>${isNational ? 'Australia (National Total)' : st}</b><br>Year: ${d.year}<br>Hospitalisations: <b>${d.value.toLocaleString()}</b>`);
+          })
+          .on("mousemove", event => {
+            tooltip.style("left", (event.pageX + 12) + "px").style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", () => tooltip.style("opacity", 0));
+      });
+    }
+  }
+
+  updateDashboard();
+</script>
+</body>
+</html>
