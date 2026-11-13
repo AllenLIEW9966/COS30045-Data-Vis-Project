@@ -1,78 +1,231 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Q3: Vulnerable Road Users vs Vehicle Occupants (2021)</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Q3: Vulnerable Road Users vs Vehicle Occupants (D3.js)</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 20px; background-color: #f8fafc; }
-    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 1000px; margin: 0 auto; }
-    h2 { margin-top: 0; color: #1e293b; }
-    p { color: #64748b; font-size: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 20px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 950px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1e293b;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .arc path {
+      cursor: pointer;
+      transition: all 0.25s ease-out;
+    }
+    .arc path:hover {
+      opacity: 0.9;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+    .center-text-title {
+      font-size: 13px;
+      fill: #64748b;
+      text-anchor: middle;
+      font-weight: 500;
+    }
+    .center-text-value {
+      font-size: 26px;
+      fill: #0f172a;
+      text-anchor: middle;
+      font-weight: bold;
+    }
+  
+    .d3-tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      background: rgba(15, 23, 42, 0.95);
+      color: #ffffff;
+      border-radius: 8px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 100;
+      max-width: 260px;
+    }
+    .tooltip-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 4px;
+    }
+    .slice-label {
+      fill: #ffffff;
+      font-size: 13px;
+      font-weight: bold;
+      text-anchor: middle;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
   <h2>Vulnerable Road Users vs. Vehicle Occupants (Australia, 2021)</h2>
-  <p>💡 <b>Interactive Tip:</b> Hover over the donut segments to view exact counts and overall percentages. Click the legend items to filter categories.</p>
-  <div id="donutChart" style="width:100%; height:600px;"></div>
+  <p class="subtitle">💡 <b>Interactive D3 Chart:</b> Hover over the donut segments to view exact counts, overall proportions, and sub-role breakdowns.</p>
+  <div id="chart-container" style="display:flex; justify-content:center;"></div>
 </div>
 
 <script>
-  const categories = ['Vulnerable Road Users', 'Vehicle Occupants'];
-  const values = [19380, 18539]; 
-
-  const breakdownDetails = [
-    'Motorcyclists: 8,883<br>Pedal Cyclists: 8,163<br>Pedestrians: 2,334',
-    'Car Drivers: 13,327<br>Car Passengers: 4,495<br>Unspecified Position: 717'
+  const rawData = [
+    { role: "Car driver", count: 13327, category: "Car occupants" },
+    { role: "Car passenger", count: 4495, category: "Car occupants" },
+    { role: "Car unknown position", count: 717, category: "Car occupants" },
+    { role: "Motorcyclist", count: 8883, category: "Vulnerable road users" },
+    { role: "Pedal cyclist", count: 8163, category: "Vulnerable road users" },
+    { role: "Pedestrian", count: 2334, category: "Vulnerable road users" },
+    { role: "Heavy transport driver", count: 383, category: "Other vehicle occupants" },
+    { role: "Heavy transport passenger", count: 56, category: "Other vehicle occupants" },
+    { role: "Heavy transport unknown position", count: 36, category: "Other vehicle occupants" },
+    { role: "Pick-up truck or van occupant", count: 341, category: "Other vehicle occupants" },
+    { role: "Bus occupant", count: 169, category: "Other vehicle occupants" },
+    { role: "Other or unknown", count: 601, category: "Other or unknown" }
   ];
 
-  const data = [{
-    labels: categories,
-    values: values,
-    type: 'pie',
-    hole: 0.55, 
-    marker: {
-      colors: ['#f59e0b', '#3b82f6'], 
-      line: { color: '#ffffff', width: 2 }
-    },
-    textinfo: 'label+percent',
-    textposition: 'inside',
-    insidetextfont: { size: 14, color: '#ffffff', family: 'sans-serif' },
-    customdata: breakdownDetails,
-    hovertemplate: '<b>%{label}</b><br>' +
-                   'Hospitalisations: %{value:,} (%{percent})<br>' +
-                   '------------------------------<br>' +
-                   '<b>Detailed Breakdown:</b><br>%{customdata}' +
-                   '<extra></extra>'
-  }];
+  const totalHospitalisations = 39505;
 
-  const layout = {
-    title: {
-      text: 'Proportion of Serious Road Crash Hospitalisations by Road User Group',
-      font: { size: 18, color: '#1e293b' }
-    },
-    annotations: [
-      {
-        font: { size: 16, color: '#475569', weight: 'bold' },
-        showarrow: false,
-        text: 'Total<br><b>37,919</b>',
-        x: 0.5,
-        y: 0.5
-      }
-    ],
-    showlegend: true,
-    legend: {
-      orientation: 'h',
-      x: 0.25,
-      y: -0.05
-    },
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff'
-  };
+  const categoryOrder = ["Vulnerable road users", "Car occupants", "Other vehicle occupants", "Other or unknown"];
+  
+  const aggregatedData = categoryOrder.map(cat => {
+    const items = rawData.filter(d => d.category === cat);
+    const sum = d3.sum(items, d => d.count);
+    return {
+      category: cat,
+      total: sum,
+      percent: (sum / totalHospitalisations * 100).toFixed(1),
+      roles: items
+    };
+  });
 
-  Plotly.newPlot('donutChart', data, layout, { responsive: true });
+  const width = 640;
+  const height = 480;
+  const margin = 40;
+  const radius = Math.min(width, height) / 2 - margin;
+
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height + 60}`)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .append("g")
+    .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+  const color = d3.scaleOrdinal()
+    .domain(categoryOrder)
+    .range(["#f59e0b", "#3b82f6", "#06b6d4", "#94a3b8"]);
+
+  const pie = d3.pie()
+    .value(d => d.total)
+    .sort(null); 
+
+  const arc = d3.arc()
+    .innerRadius(radius * 0.55)
+    .outerRadius(radius * 0.88);
+
+  const arcHover = d3.arc()
+    .innerRadius(radius * 0.53)
+    .outerRadius(radius * 0.94);
+
+  const arcLabel = d3.arc()
+    .innerRadius(radius * 0.72)
+    .outerRadius(radius * 0.72);
+
+  const tooltip = d3.select("body").append("div").attr("class", "d3-tooltip");
+
+  const arcs = svg.selectAll(".arc")
+    .data(pie(aggregatedData))
+    .enter()
+    .append("g")
+    .attr("class", "arc");
+
+  arcs.append("path")
+    .attr("d", arc)
+    .attr("fill", d => color(d.data.category))
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 2.5)
+    .on("mouseover", function(event, d) {
+      d3.select(this).transition().duration(200).attr("d", arcHover);
+      
+      const roleListHtml = d.data.roles
+        .map(r => `• ${r.role}: <b>${r.count.toLocaleString()}</b>`)
+        .join("<br>");
+
+      tooltip.style("opacity", 1)
+        .html(`
+          <div class="tooltip-title">${d.data.category}</div>
+          <b>Hospitalisations:</b> ${d.data.total.toLocaleString()} (${d.data.percent}%)<br>
+          <div style="margin-top:6px; font-weight:600; color:#cbd5e1;">Breakdown:</div>
+          ${roleListHtml}
+        `);
+    })
+    .on("mousemove", event => {
+      tooltip.style("left", (event.pageX + 15) + "px")
+             .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function() {
+      d3.select(this).transition().duration(200).attr("d", arc);
+      tooltip.style("opacity", 0);
+    });
+
+  arcs.append("text")
+    .attr("class", "slice-label")
+    .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+    .text(d => d.data.percent > 4 ? `${d.data.percent}%` : "");
+
+  svg.append("text")
+    .attr("class", "center-text-title")
+    .attr("y", -10)
+    .text("Total Trauma");
+
+  svg.append("text")
+    .attr("class", "center-text-value")
+    .attr("y", 18)
+    .text(totalHospitalisations.toLocaleString());
+
+  const legendG = svg.append("g")
+    .attr("transform", `translate(${-width / 2 + 35}, ${radius + 40})`);
+
+  categoryOrder.forEach((cat, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    const item = legendG.append("g")
+      .attr("transform", `translate(${col * 300}, ${row * 24})`);
+
+    item.append("rect")
+      .attr("width", 14)
+      .attr("height", 14)
+      .attr("rx", 3)
+      .attr("fill", color(cat));
+
+    item.append("text")
+      .attr("x", 22)
+      .attr("y", 11)
+      .attr("fill", "#334155")
+      .attr("font-size", "12px")
+      .text(cat);
+  });
 </script>
 </body>
 </html>

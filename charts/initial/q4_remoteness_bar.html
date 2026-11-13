@@ -1,66 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Q4: Geographic Disparity Across Remoteness Zones (2021)</title>
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Q4: Geographic Disparity Across Remoteness Zones (D3.js)</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 20px; background-color: #f8fafc; }
-    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 1000px; margin: 0 auto; }
-    h2 { margin-top: 0; color: #1e293b; }
-    p { color: #64748b; font-size: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 20px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 950px;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1e293b;
+    }
+    p.subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .axis line, .axis path {
+      stroke: #cbd5e1;
+    }
+    .axis text {
+      fill: #475569;
+      font-size: 13px;
+    }
+    .grid line {
+      stroke: #f1f5f9;
+      stroke-opacity: 0.8;
+      shape-rendering: crispEdges;
+    }
+    .bar {
+      cursor: pointer;
+      transition: opacity 0.2s, filter 0.2s;
+    }
+    .bar:hover {
+      opacity: 0.85;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+    }
+    .bar-label {
+      fill: #1e293b;
+      font-size: 13px;
+      font-weight: 600;
+      dominant-baseline: middle;
+    }
+    .d3-tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      color: #ffffff;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
   <h2>Geographical Remoteness Disparity in Hospitalised Road Injuries (2021)</h2>
-  <p>💡 <b>Interactive Tip:</b> Hover over the horizontal bars to see exact injury figures and proportions across urban, regional, and remote zones.</p>
-  <div id="barChart" style="width:100%; height:450px;"></div>
+  <p class="subtitle">💡 <b>Interactive D3 Chart:</b> Ranked descending by trauma volume. Hover over bars to view exact counts and national shares.</p>
+  <div id="chart-container"></div>
 </div>
 
 <script>
-  const remotenessZones = ['Remote', 'Regional', 'Major Cities'];
-  const hospitalisations = [1114, 11407, 26355];
-  const percentages = ['2.9%', '29.4%', '67.8%'];
+  const data = [
+    { zone: "Major Cities",     count: 26355, percent: "66.7%", color: "#0369a1" },
+    { zone: "Regional",         count: 11407, percent: "28.9%", color: "#0284c7" },
+    { zone: "Remote",           count: 1114,  percent: "2.8%",  color: "#38bdf8" },
+    { zone: "Other or unknown", count: 629,   percent: "1.6%",  color: "#94a3b8" }
+  ];
 
-  const data = [{
-    type: 'bar',
-    x: hospitalisations,
-    y: remotenessZones,
-    orientation: 'h', 
-    marker: {
-      color: ['#0284c7', '#0369a1', '#075985'], 
-      line: { color: '#0c4a6e', width: 1.5 }
-    },
-    text: hospitalisations.map((val, idx) => `  ${val.toLocaleString()} (${percentages[idx]})`),
-    textposition: 'outside',
-    insidetextfont: { size: 13, color: '#334155' },
-    hovertemplate: '<b>Zone: %{y}</b><br>' +
-                   'Hospitalisations: %{x:,}<extra></extra>'
-  }];
+  const total = 39505;
 
-  const layout = {
-    title: {
-      text: 'Total Hospitalised Road Crash Injuries Ranked by Remoteness (Australia, 2021)',
-      font: { size: 18, color: '#1e293b' }
-    },
-    xaxis: {
-      title: 'Number of Hospitalisations',
-      gridcolor: '#e2e8f0',
-      range: [0, 31000], 
-      zerolinecolor: '#cbd5e1'
-    },
-    yaxis: {
-      title: 'Remoteness Area',
-      tickfont: { size: 14, color: '#334155' }
-    },
-    margin: { l: 120, r: 50, t: 70, b: 60 },
-    plot_bgcolor: '#ffffff',
-    paper_bgcolor: '#ffffff'
-  };
+  const margin = { top: 30, right: 140, bottom: 50, left: 140 };
+  const width = 880 - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
 
-  Plotly.newPlot('barChart', data, layout, { responsive: true });
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const y = d3.scaleBand()
+    .domain(data.map(d => d.zone))
+    .range([0, height])
+    .padding(0.32);
+
+  const x = d3.scaleLinear()
+    .domain([0, 30000])
+    .nice()
+    .range([0, width]);
+
+  svg.append("g")
+    .attr("class", "grid")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).tickSize(-height).tickFormat(""));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).ticks(6).tickFormat(d => (d >= 1000 ? `${d / 1000}k` : d)));
+
+  svg.append("g")
+    .attr("class", "axis")
+    .call(d3.axisLeft(y).tickSize(0).tickPadding(12));
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height + 42)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Number of Hospitalisations");
+
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -115)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#475569")
+    .attr("font-size", "13px")
+    .text("Remoteness Area");
+
+  // Tooltip
+  const tooltip = d3.select("body").append("div").attr("class", "d3-tooltip");
+
+  svg.selectAll(".bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("y", d => y(d.zone))
+    .attr("x", 0)
+    .attr("height", y.bandwidth())
+    .attr("width", 0) 
+    .attr("rx", 4) 
+    .attr("fill", d => d.color)
+    .on("mouseover", (event, d) => {
+      tooltip.style("opacity", 1)
+        .html(`<b>Zone: ${d.zone}</b><br>Hospitalisations: <b>${d.count.toLocaleString()}</b><br>Share of Total: <b>${d.percent}</b>`);
+    })
+    .on("mousemove", event => {
+      tooltip.style("left", (event.pageX + 12) + "px")
+             .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", () => tooltip.style("opacity", 0))
+    .transition()
+    .duration(800)
+    .delay((d, i) => i * 120)
+    .attr("width", d => x(d.count));
+
+  svg.selectAll(".bar-label")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("class", "bar-label")
+    .attr("x", d => x(d.count) + 10)
+    .attr("y", d => y(d.zone) + y.bandwidth() / 2)
+    .style("opacity", 0)
+    .text(d => `${d.count.toLocaleString()} (${d.percent})`)
+    .transition()
+    .duration(800)
+    .delay((d, i) => i * 120 + 300)
+    .style("opacity", 1);
 </script>
 </body>
 </html>
