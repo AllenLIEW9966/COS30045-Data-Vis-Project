@@ -1,0 +1,295 @@
+window.ROAD_SAFETY_DATA = {
+  "years": [
+    {
+      "year": 2012,
+      "NSW": 11121,
+      "Vic": 8098,
+      "Qld": 6813,
+      "SA": 2311,
+      "WA": 3493,
+      "Tas": 536,
+      "NT": 496,
+      "ACT": 601,
+      "Australia": 34024
+    },
+    {
+      "year": 2013,
+      "NSW": 11421,
+      "Vic": 7784,
+      "Qld": 7821,
+      "SA": 2221,
+      "WA": 3475,
+      "Tas": 570,
+      "NT": 561,
+      "ACT": 573,
+      "Australia": 35001
+    },
+    {
+      "year": 2014,
+      "NSW": 11313,
+      "Vic": 8523,
+      "Qld": 7725,
+      "SA": 2381,
+      "WA": 3154,
+      "Tas": 646,
+      "NT": 575,
+      "ACT": 542,
+      "Australia": 35515
+    },
+    {
+      "year": 2015,
+      "NSW": 11084,
+      "Vic": 9198,
+      "Qld": 8306,
+      "SA": 2467,
+      "WA": 3183,
+      "Tas": 677,
+      "NT": 691,
+      "ACT": 700,
+      "Australia": 37082
+    },
+    {
+      "year": 2016,
+      "NSW": 11474,
+      "Vic": 10360,
+      "Qld": 8702,
+      "SA": 2654,
+      "WA": 3031,
+      "Tas": 657,
+      "NT": 709,
+      "ACT": 654,
+      "Australia": 38963
+    },
+    {
+      "year": 2017,
+      "NSW": 11016,
+      "Vic": 10794,
+      "Qld": 9134,
+      "SA": 2394,
+      "WA": 3195,
+      "Tas": 659,
+      "NT": 703,
+      "ACT": 632,
+      "Australia": 39339
+    },
+    {
+      "year": 2018,
+      "NSW": 9794,
+      "Vic": 11453,
+      "Qld": 9381,
+      "SA": 2489,
+      "WA": 3274,
+      "Tas": 781,
+      "NT": 832,
+      "ACT": 712,
+      "Australia": 39590
+    },
+    {
+      "year": 2019,
+      "NSW": 9942,
+      "Vic": 11392,
+      "Qld": 9515,
+      "SA": 2457,
+      "WA": 3534,
+      "Tas": 708,
+      "NT": 656,
+      "ACT": 665,
+      "Australia": 39866
+    },
+    {
+      "year": 2020,
+      "NSW": 9274,
+      "Vic": 9884,
+      "Qld": 9801,
+      "SA": 2503,
+      "WA": 3636,
+      "Tas": 778,
+      "NT": 787,
+      "ACT": 629,
+      "Australia": 37966
+    },
+    {
+      "year": 2021,
+      "NSW": 9003,
+      "Vic": 11130,
+      "Qld": 10447,
+      "SA": 2632,
+      "WA": 3568,
+      "Tas": 805,
+      "NT": 710,
+      "ACT": 740,
+      "Australia": 39505
+    }
+  ],
+  "ageSex": [
+    {
+      "age": "0-7",
+      "Male": 416,
+      "Female": 291
+    },
+    {
+      "age": "8-16",
+      "Male": 2150,
+      "Female": 713
+    },
+    {
+      "age": "17-25",
+      "Male": 5226,
+      "Female": 2783
+    },
+    {
+      "age": "26-39",
+      "Male": 6186,
+      "Female": 3237
+    },
+    {
+      "age": "40-64",
+      "Male": 8702,
+      "Female": 4324
+    },
+    {
+      "age": "65-74",
+      "Male": 1795,
+      "Female": 1223
+    },
+    {
+      "age": "75+",
+      "Male": 1313,
+      "Female": 1145
+    }
+  ],
+  "roadUsers": [
+    {
+      "role": "Car driver",
+      "count": 13327,
+      "group": "Car occupants"
+    },
+    {
+      "role": "Car passenger",
+      "count": 4495,
+      "group": "Car occupants"
+    },
+    {
+      "role": "Car unknown position",
+      "count": 717,
+      "group": "Car occupants"
+    },
+    {
+      "role": "Motorcyclist",
+      "count": 8883,
+      "group": "Vulnerable road users"
+    },
+    {
+      "role": "Pedal cyclist",
+      "count": 8163,
+      "group": "Vulnerable road users"
+    },
+    {
+      "role": "Pedestrian",
+      "count": 2334,
+      "group": "Vulnerable road users"
+    },
+    {
+      "role": "Heavy transport driver",
+      "count": 383,
+      "group": "Other vehicle occupants"
+    },
+    {
+      "role": "Heavy transport passenger",
+      "count": 56,
+      "group": "Other vehicle occupants"
+    },
+    {
+      "role": "Heavy transport unknown position",
+      "count": 36,
+      "group": "Other vehicle occupants"
+    },
+    {
+      "role": "Pick-up truck or van occupant",
+      "count": 341,
+      "group": "Other vehicle occupants"
+    },
+    {
+      "role": "Bus occupant",
+      "count": 169,
+      "group": "Other vehicle occupants"
+    },
+    {
+      "role": "Other or unknown",
+      "count": 601,
+      "group": "Other or unknown"
+    }
+  ],
+  "remoteness": [
+    {
+      "area": "Major Cities",
+      "count": 26355
+    },
+    {
+      "area": "Regional",
+      "count": 11407
+    },
+    {
+      "area": "Remote",
+      "count": 1114
+    },
+    {
+      "area": "Other or unknown",
+      "count": 629
+    }
+  ],
+  "firstNations": [
+    {
+      "area": "Major Cities",
+      "group": "First Nations",
+      "count": 795
+    },
+    {
+      "area": "Major Cities",
+      "group": "Non-Indigenous",
+      "count": 25254
+    },
+    {
+      "area": "Regional",
+      "group": "First Nations",
+      "count": 885
+    },
+    {
+      "area": "Regional",
+      "group": "Non-Indigenous",
+      "count": 10332
+    },
+    {
+      "area": "Remote",
+      "group": "First Nations",
+      "count": 503
+    },
+    {
+      "area": "Remote",
+      "group": "Non-Indigenous",
+      "count": 600
+    },
+    {
+      "area": "Unknown / excluded",
+      "group": "First Nations",
+      "count": 37,
+      "derived": true
+    },
+    {
+      "area": "Unknown / excluded",
+      "group": "Non-Indigenous",
+      "count": 569,
+      "derived": true
+    }
+  ],
+  "fnTotals": {
+    "First Nations": 2220,
+    "Non-Indigenous": 36755
+  },
+  "notes": {
+    "period": "2012–2021 for state and territory trends; other breakdowns show 2021.",
+    "q1": "Australia total is retained as a published aggregate and may not equal the sum of the reported jurisdictions.",
+    "q2": "The male and female rows sum to 39,504, one below the 2021 national total of 39,505. The source sex table does not allocate this difference.",
+    "q5": "First Nations remoteness residuals are calculated from each group’s annual total less the three reported remoteness categories. Counts are not population-adjusted rates."
+  }
+};
