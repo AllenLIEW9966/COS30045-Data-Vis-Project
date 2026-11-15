@@ -1,1 +1,132 @@
-.chart-loading-stage{position:relative;min-width:0;width:100%;isolation:isolate}.chart-loading-stage>svg{transition:opacity .25s ease}.chart-loading-overlay{position:absolute;inset:0;overflow:hidden;border-radius:12px;background:var(--white);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s;z-index:2}.is-chart-loading>.chart-loading-overlay{opacity:1;visibility:visible;pointer-events:auto}.is-chart-loading>svg{opacity:0}.loading-grid{position:absolute;inset:20px 18px 30px;background-image:linear-gradient(to right,var(--line) 1px,transparent 1px),linear-gradient(to bottom,var(--line) 1px,transparent 1px);background-size:12.5% 100%,100% 25%;opacity:.3;animation:loading-grid-sync 1.6s ease-in-out infinite}.loading-grid::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,#ffffff80 48%,transparent 75%);background-size:200% 100%;animation:loading-shimmer 1.6s linear infinite}.chart-loading-overlay .loading-pulse-svg{position:absolute;inset:20% 3% 18%;width:94%;height:62%;overflow:visible}.loading-track,.loading-pulse{fill:none;stroke:var(--foreground,var(--ink));stroke-width:2;vector-effect:non-scaling-stroke;stroke-linecap:round}.loading-track{stroke-opacity:.08}.loading-pulse{stroke-opacity:.5;stroke-dasharray:18 82;animation:loading-pulse-travel 1.6s linear infinite}.loading-label{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:12px;letter-spacing:.05em;color:var(--muted);animation:loading-grid-sync 1.6s ease-in-out infinite}@keyframes loading-pulse-travel{from{stroke-dashoffset:25}to{stroke-dashoffset:-100}}@keyframes loading-grid-sync{0%,100%{opacity:.25}50%{opacity:.65}}@keyframes loading-shimmer{from{background-position:100% 0}to{background-position:-100% 0}}.user-frame>.chart-loading-stage{grid-column:2}.donut-frame>.chart-loading-stage{max-width:500px}@media(max-width:600px){.user-frame>.chart-loading-stage{grid-column:1}}@media(prefers-reduced-motion:reduce){.chart-loading-stage>svg,.chart-loading-overlay{transition:none}.loading-grid,.loading-grid::after,.loading-pulse,.loading-label{animation:none}}
+.chart-loading-stage {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  isolation: isolate;
+}
+.chart-loading-stage > svg {
+  transition: opacity 0.25s ease;
+}
+.chart-loading-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--white);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s;
+  z-index: 2;
+}
+.is-chart-loading > .chart-loading-overlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.is-chart-loading > svg {
+  opacity: 0;
+}
+.loading-grid {
+  position: absolute;
+  inset: 20px 18px 30px;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size:
+    12.5% 100%,
+    100% 25%;
+  opacity: 0.3;
+  animation: loading-grid-sync 1.6s ease-in-out infinite;
+}
+.loading-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, #ffffff80 48%, transparent 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.6s linear infinite;
+}
+.chart-loading-overlay .loading-pulse-svg {
+  position: absolute;
+  inset: 20% 3% 18%;
+  width: 94%;
+  height: 62%;
+  overflow: visible;
+}
+.loading-track,
+.loading-pulse {
+  fill: none;
+  stroke: var(--foreground, var(--ink));
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+.loading-track {
+  stroke-opacity: 0.08;
+}
+.loading-pulse {
+  stroke-opacity: 0.5;
+  stroke-dasharray: 18 82;
+  animation: loading-pulse-travel 1.6s linear infinite;
+}
+.loading-label {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  animation: loading-grid-sync 1.6s ease-in-out infinite;
+}
+@keyframes loading-pulse-travel {
+  from {
+    stroke-dashoffset: 25;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+@keyframes loading-grid-sync {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+@keyframes loading-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+.user-frame > .chart-loading-stage {
+  grid-column: 2;
+}
+.donut-frame > .chart-loading-stage {
+  max-width: 500px;
+}
+@media (max-width: 600px) {
+  .user-frame > .chart-loading-stage {
+    grid-column: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-loading-stage > svg,
+  .chart-loading-overlay {
+    transition: none;
+  }
+  .loading-grid,
+  .loading-grid::after,
+  .loading-pulse,
+  .loading-label {
+    animation: none;
+  }
+}

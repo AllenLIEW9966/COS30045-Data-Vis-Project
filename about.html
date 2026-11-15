@@ -1,33 +1,117 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sources and interpretation notes for the Australian road injury dashboard.">
-  <title>Data &amp; notes | Road Data</title>
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('road-data-theme')==='dark'?'dark':'light'}catch{document.documentElement.dataset.theme='light'}</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="road-data/styles.css">
-  <link rel="stylesheet" href="road-data/polish.css">
-  <link rel="stylesheet" href="road-data/neumorphic.css">
-  <link rel="stylesheet" href="road-data/navigation-motion.css">
-  <link rel="stylesheet" href="road-data/theme.css">
-  <link rel="stylesheet" href="road-data/about.css">
-  <script src="road-data/polish.js" defer></script>
-  <script src="road-data/neumorphic.js" defer></script>
-  <script src="road-data/navigation-motion.js" defer></script>
-  <script src="road-data/theme.js" defer></script>
-</head>
-<body class="about-page">
-  <div class="topbar page-width"><a class="wordmark" href="index.html" aria-label="Road injury in Australia home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>ROAD<span class="wordmark-light">/</span>DATA</a><div class="edition"><span class="status-dot" aria-hidden="true"></span> AUSTRALIA <span class="edition-divider">/</span> 2012—2021</div><nav class="primary-nav" aria-label="Primary navigation"><a href="index.html">Dashboard</a><a href="platform.html">State explorer <span aria-hidden="true">↗</span></a><a href="about.html" aria-current="page">Data &amp; notes <span aria-hidden="true">↘</span></a></nav></div>
-  <main class="page-width about-main">
-    <header class="about-hero"><p class="overline">SOURCES &amp; INTERPRETATION</p><h1>Read the counts<br>in context.</h1><p class="section-deck">The charts describe hospitalised road crash injuries in Australia. Annual jurisdiction counts cover 2012–2021; the other breakdowns show 2021.</p></header>
-    <section class="chart-frame about-card"><p class="section-kicker">WHAT THE NUMBERS MEAN</p><h2>Hospitalisations are counts.</h2><p>They do not represent every crash, every injury, or population-adjusted risk. Comparisons between groups and places need population denominators before they can be interpreted as rates.</p><p>The published Australia total is retained separately from state and territory figures; the reported jurisdictions do not necessarily add to the national figure.</p></section>
-    <section class="chart-frame about-card"><p class="section-kicker">COVERAGE NOTES</p><h2>Keep the source limits visible.</h2><ul><li>The age-by-sex rows sum to 39,504, one below the published 2021 Australia total of 39,505.</li><li>The remoteness distribution retains the published “Other or unknown” category.</li><li>The First Nations chart compares counts. Its unknown-area values are residuals derived from group totals less the three reported areas. The two group totals sum to 38,975; 530 cases fall outside them.</li></ul></section>
-    <section class="chart-frame about-card"><p class="section-kicker">PROJECT WORKBOOKS</p><h2>Assignment data files.</h2><ul class="workbook-list"><li><a href="assets/Question1.xlsx">Question 1 workbook — jurisdiction trends</a></li><li><a href="assets/Question2.xlsx">Question 2 workbook — age and sex</a></li><li><a href="assets/Question3.xlsx">Question 3 workbook — road users</a></li><li><a href="assets/Question4.xlsx">Question 4 workbook — remoteness</a></li><li><a href="assets/Question5.xlsx">Question 5 workbook — First Nations comparison</a></li></ul><p>The displayed charts use the prepared values in <code>road-data/data.js</code>. The dashboard also names the AIHW publication workbooks behind those values.</p></section>
-    <footer class="method-footer"><a href="index.html">← Back to dashboard</a><span class="footer-stamp">ROAD / DATA <span>AUSTRALIA · 2012—2021</span></span></footer>
-  </main>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Sources and interpretation notes for the Australian road injury dashboard."
+    />
+    <title>Data &amp; notes | Road Data</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("road-data-theme") === "dark" ? "dark" : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="road-data/styles.css" />
+    <link rel="stylesheet" href="road-data/polish.css" />
+    <link rel="stylesheet" href="road-data/neumorphic.css" />
+    <link rel="stylesheet" href="road-data/navigation-motion.css" />
+    <link rel="stylesheet" href="road-data/theme.css" />
+    <link rel="stylesheet" href="road-data/about.css" />
+    <script src="road-data/polish.js" defer></script>
+    <script src="road-data/neumorphic.js" defer></script>
+    <script src="road-data/navigation-motion.js" defer></script>
+    <script src="road-data/theme.js" defer></script>
+  </head>
+  <body class="about-page">
+    <div class="topbar page-width">
+      <a class="wordmark" href="index.html" aria-label="Road injury in Australia home"
+        ><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>ROAD<span
+          class="wordmark-light"
+          >/</span
+        >DATA</a
+      >
+      <div class="edition">
+        <span class="status-dot" aria-hidden="true"></span> AUSTRALIA
+        <span class="edition-divider">/</span> 2012—2021
+      </div>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="index.html">Dashboard</a
+        ><a href="platform.html">State explorer <span aria-hidden="true">↗</span></a
+        ><a href="about.html" aria-current="page"
+          >Data &amp; notes <span aria-hidden="true">↘</span></a
+        >
+      </nav>
+    </div>
+    <main class="page-width about-main">
+      <header class="about-hero">
+        <p class="overline">SOURCES &amp; INTERPRETATION</p>
+        <h1>Read the counts<br />in context.</h1>
+        <p class="section-deck">
+          The charts describe hospitalised road crash injuries in Australia. Annual jurisdiction
+          counts cover 2012–2021; the other breakdowns show 2021.
+        </p>
+      </header>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">WHAT THE NUMBERS MEAN</p>
+        <h2>Hospitalisations are counts.</h2>
+        <p>
+          They do not represent every crash, every injury, or population-adjusted risk. Comparisons
+          between groups and places need population denominators before they can be interpreted as
+          rates.
+        </p>
+        <p>
+          The published Australia total is retained separately from state and territory figures; the
+          reported jurisdictions do not necessarily add to the national figure.
+        </p>
+      </section>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">COVERAGE NOTES</p>
+        <h2>Keep the source limits visible.</h2>
+        <ul>
+          <li>
+            The age-by-sex rows sum to 39,504, one below the published 2021 Australia total of
+            39,505.
+          </li>
+          <li>The remoteness distribution retains the published “Other or unknown” category.</li>
+          <li>
+            The First Nations chart compares counts. Its unknown-area values are residuals derived
+            from group totals less the three reported areas. The two group totals sum to 38,975; 530
+            cases fall outside them.
+          </li>
+        </ul>
+      </section>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">PROJECT WORKBOOKS</p>
+        <h2>Assignment data files.</h2>
+        <ul class="workbook-list">
+          <li><a href="assets/Question1.xlsx">Question 1 workbook — jurisdiction trends</a></li>
+          <li><a href="assets/Question2.xlsx">Question 2 workbook — age and sex</a></li>
+          <li><a href="assets/Question3.xlsx">Question 3 workbook — road users</a></li>
+          <li><a href="assets/Question4.xlsx">Question 4 workbook — remoteness</a></li>
+          <li>
+            <a href="assets/Question5.xlsx">Question 5 workbook — First Nations comparison</a>
+          </li>
+        </ul>
+        <p>
+          The displayed charts use the prepared values in <code>road-data/data.js</code>. The
+          dashboard also names the AIHW publication workbooks behind those values.
+        </p>
+      </section>
+      <footer class="method-footer">
+        <a href="index.html">← Back to dashboard</a
+        ><span class="footer-stamp">ROAD / DATA <span>AUSTRALIA · 2012—2021</span></span>
+      </footer>
+    </main>
+  </body>
 </html>

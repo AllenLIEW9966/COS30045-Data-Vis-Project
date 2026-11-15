@@ -1,120 +1,286 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An interactive visual exploration of Australian hospitalised road crash injuries, 2012–2021.">
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('road-data-theme')==='dark'?'dark':'light'}catch{document.documentElement.dataset.theme='light'}</script>
-  <title>Road injury in Australia | 2012–2021</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="road-data/styles.css">
-  <script src="road-data/vendor/d3.min.js" defer></script>
-  <script src="road-data/data.js" defer></script>
-  <script src="road-data/app.js" defer></script>
-<link rel="stylesheet" href="road-data/polish.css"><script src="road-data/polish.js" defer></script><link rel="stylesheet" href="road-data/neumorphic.css"><script src="road-data/neumorphic.js" defer></script><script src="road-data/vendor/motion.js" defer></script><script src="road-data/motion-effects.js" defer></script><script src="road-data/chart-interactions.js" defer></script><link rel="stylesheet" href="road-data/chart-loading.css"><script src="road-data/chart-loading.js" defer></script><script src="road-data/chart-motion.js" defer></script><link rel="stylesheet" href="road-data/navigation-motion.css"><script src="road-data/navigation-motion.js" defer></script><link rel="stylesheet" href="road-data/remote-interaction.css"><link rel="stylesheet" href="road-data/theme.css"><script src="road-data/theme.js" defer></script></head>
-<body class="dashboard-page">
-  <header class="masthead">
-    <div class="topbar page-width"><a class="wordmark" href="index.html" aria-label="Road injury in Australia home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>ROAD<span class="wordmark-light">/</span>DATA</a><div class="edition"><span class="status-dot" aria-hidden="true"></span> AUSTRALIA <span class="edition-divider">/</span> 2012—2021</div><nav class="primary-nav" aria-label="Primary navigation"><a href="index.html" aria-current="page">Dashboard</a><a href="platform.html">State explorer <span aria-hidden="true">↗</span></a><a href="about.html">Data &amp; notes <span aria-hidden="true">↘</span></a></nav></div>
-    <div class="hero page-width" id="top">
-      <div class="hero-copy">
-        <p class="overline"><span class="overline-line"></span> HOSPITALISED ROAD CRASH INJURIES</p>
-        <h1>Road trauma hospitalisations across Australia</h1>
-        <p class="hero-text">Where the numbers moved, who was hospitalised, and how the pattern changes across place and road-user type.</p>
-        <a class="scroll-cue" href="#trend">Explore the data →</a>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="An interactive visual exploration of Australian hospitalised road crash injuries, 2012–2021."
+    />
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("road-data-theme") === "dark" ? "dark" : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <title>Road injury in Australia | 2012–2021</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="road-data/styles.css" />
+    <script src="road-data/vendor/d3.min.js" defer></script>
+    <script src="road-data/data.js" defer></script>
+    <script src="road-data/app.js" defer></script>
+    <link rel="stylesheet" href="road-data/polish.css" />
+    <script src="road-data/polish.js" defer></script>
+    <link rel="stylesheet" href="road-data/neumorphic.css" />
+    <script src="road-data/neumorphic.js" defer></script>
+    <script src="road-data/vendor/motion.js" defer></script>
+    <script src="road-data/motion-effects.js" defer></script>
+    <script src="road-data/chart-interactions.js" defer></script>
+    <link rel="stylesheet" href="road-data/chart-loading.css" />
+    <script src="road-data/chart-loading.js" defer></script>
+    <script src="road-data/chart-motion.js" defer></script>
+    <link rel="stylesheet" href="road-data/navigation-motion.css" />
+    <script src="road-data/navigation-motion.js" defer></script>
+    <link rel="stylesheet" href="road-data/remote-interaction.css" />
+    <link rel="stylesheet" href="road-data/theme.css" />
+    <script src="road-data/theme.js" defer></script>
+  </head>
+  <body class="dashboard-page">
+    <header class="masthead">
+      <div class="topbar page-width">
+        <a class="wordmark" href="index.html" aria-label="Road injury in Australia home"
+          ><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>ROAD<span
+            class="wordmark-light"
+            >/</span
+          >DATA</a
+        >
+        <div class="edition">
+          <span class="status-dot" aria-hidden="true"></span> AUSTRALIA
+          <span class="edition-divider">/</span> 2012—2021
+        </div>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a href="index.html" aria-current="page">Dashboard</a
+          ><a href="platform.html">State explorer <span aria-hidden="true">↗</span></a
+          ><a href="about.html">Data &amp; notes <span aria-hidden="true">↘</span></a>
+        </nav>
+      </div>
+      <div class="hero page-width" id="top">
+        <div class="hero-copy">
+          <p class="overline">
+            <span class="overline-line"></span> HOSPITALISED ROAD CRASH INJURIES
+          </p>
+          <h1>Road trauma hospitalisations across Australia</h1>
+          <p class="hero-text">
+            Where the numbers moved, who was hospitalised, and how the pattern changes across place
+            and road-user type.
+          </p>
+          <a class="scroll-cue" href="#trend">Explore the data →</a>
+        </div>
+      </div>
+      <nav class="question-nav page-width" aria-label="Five analysis questions">
+        <a href="#trend"><span>01</span><b>Trends</b></a>
+        <a href="#age"><span>02</span><b>Age &amp; sex</b></a>
+        <a href="#users"><span>03</span><b>Road users</b></a>
+        <a href="#remoteness"><span>04</span><b>Remoteness</b></a>
+        <a href="#first-nations"><span>05</span><b>First Nations</b></a>
+      </nav>
+    </header>
+
+    <main class="page-width">
+      <div class="overview-strip" aria-label="2021 summary">
+        <div class="overview-intro">
+          <span class="section-kicker">THE BIG PICTURE</span>
+          <p>One national total.<br /><strong>Different experiences.</strong></p>
+        </div>
+        <div class="overview-stat">
+          <span>Change since 2012</span><strong id="change-2012">—</strong
+          ><small>national hospitalisations</small>
+        </div>
+        <div class="overview-stat">
+          <span>Largest age cohort</span><strong>40–64</strong
+          ><small>13,026 hospitalisations</small>
+        </div>
+        <div class="overview-stat">
+          <span>Vulnerable road users</span><strong id="vru-share">—</strong
+          ><small>of 2021 hospitalisations</small>
+        </div>
       </div>
 
-    </div>
-    <nav class="question-nav page-width" aria-label="Five analysis questions">
-      <a href="#trend"><span>01</span><b>Trends</b></a>
-      <a href="#age"><span>02</span><b>Age &amp; sex</b></a>
-      <a href="#users"><span>03</span><b>Road users</b></a>
-      <a href="#remoteness"><span>04</span><b>Remoteness</b></a>
-      <a href="#first-nations"><span>05</span><b>First Nations</b></a>
-    </nav>
-  </header>
+      <section class="question-section" id="trend" aria-labelledby="trend-title">
+        <div class="section-heading">
+          <span class="question-number">01</span>
+          <div>
+            <p class="section-kicker">NATIONAL &amp; STATE TRENDS</p>
+            <h2 id="trend-title">Hospitalisation trends by jurisdiction</h2>
+            <p class="section-deck">
+              Annual counts from 2012 to 2021 on a shared scale. Select jurisdictions in the legend
+              to compare their lines; add Australia to show the national total.
+            </p>
+          </div>
+          <span class="chart-type">COMBINED LINE CHART <span>↗</span></span>
+        </div>
+        <div
+          class="trend-grid"
+          id="trend-grid"
+          aria-label="Combined line chart by Australian jurisdiction"
+        ></div>
+        <p class="chart-note">
+          <span class="note-mark">i</span> The Australia line is the published national total. State
+          and territory counts do not necessarily sum to it.
+        </p>
+      </section>
 
-  <main class="page-width">
-    <div class="overview-strip" aria-label="2021 summary">
-      <div class="overview-intro"><span class="section-kicker">THE BIG PICTURE</span><p>One national total.<br><strong>Different experiences.</strong></p></div>
-      <div class="overview-stat"><span>Change since 2012</span><strong id="change-2012">—</strong><small>national hospitalisations</small></div>
-      <div class="overview-stat"><span>Largest age cohort</span><strong>40–64</strong><small>13,026 hospitalisations</small></div>
-      <div class="overview-stat"><span>Vulnerable road users</span><strong id="vru-share">—</strong><small>of 2021 hospitalisations</small></div>
-    </div>
+      <section class="question-section" id="age" aria-labelledby="age-title">
+        <div class="section-heading">
+          <span class="question-number">02</span>
+          <div>
+            <p class="section-kicker">AGE COHORT &amp; SEX</p>
+            <h2 id="age-title">Hospitalisations by age and sex</h2>
+            <p class="section-deck">
+              Counts are concentrated in working-age adults. Paired bars compare male and female
+              hospitalisations on the same scale.
+            </p>
+          </div>
+          <span class="chart-type">GROUPED BAR CHART <span>↗</span></span>
+        </div>
+        <div class="chart-frame age-frame">
+          <div class="chart-legend two-legend">
+            <span><i class="legend-swatch male-swatch"></i>Male</span
+            ><span><i class="legend-swatch female-swatch"></i>Female</span
+            ><span class="legend-unit">HOSPITALISATIONS</span>
+          </div>
+          <svg
+            id="age-chart"
+            role="img"
+            aria-label="Grouped horizontal bars of 2021 hospitalisations by age group and sex"
+          ></svg>
+        </div>
+        <p class="chart-note">
+          <span class="note-mark">i</span> The sex-by-age table sums to 39,504, one below the
+          published 2021 national total of 39,505. The source table does not allocate the
+          difference.
+        </p>
+      </section>
 
-    <section class="question-section" id="trend" aria-labelledby="trend-title">
-      <div class="section-heading">
-        <span class="question-number">01</span>
-        <div><p class="section-kicker">NATIONAL &amp; STATE TRENDS</p><h2 id="trend-title">Hospitalisation trends by jurisdiction</h2><p class="section-deck">Annual counts from 2012 to 2021 on a shared scale. Select jurisdictions in the legend to compare their lines; add Australia to show the national total.</p></div>
-        <span class="chart-type">COMBINED LINE CHART <span>↗</span></span>
-      </div>
-      <div class="trend-grid" id="trend-grid" aria-label="Combined line chart by Australian jurisdiction"></div>
-      <p class="chart-note"><span class="note-mark">i</span> The Australia line is the published national total. State and territory counts do not necessarily sum to it.</p>
-    </section>
+      <section class="question-section" id="users" aria-labelledby="users-title">
+        <div class="section-heading">
+          <span class="question-number">03</span>
+          <div>
+            <p class="section-kicker">ROAD-USER CATEGORIES</p>
+            <h2 id="users-title">Hospitalisations by road-user category</h2>
+            <p class="section-deck">
+              Individual categories are sorted by hospitalisation count. Motorcyclists, pedal
+              cyclists and pedestrians together account for nearly half of the 2021 total.
+            </p>
+          </div>
+          <span class="chart-type">HORIZONTAL BAR CHART <span>↗</span></span>
+        </div>
+        <div class="chart-frame user-frame">
+          <div class="stacked-total"><span>ALL ROAD USERS · 2021</span><strong>39,505</strong></div>
+          <svg
+            id="users-chart"
+            role="img"
+            aria-label="Sorted horizontal bars showing 2021 hospitalisations by road-user category"
+          ></svg>
+        </div>
+        <p class="chart-note">
+          <span class="note-mark">i</span> Colours distinguish vulnerable road users, car occupants,
+          other vehicle occupants, and other or unknown. Every source category is shown separately.
+        </p>
+      </section>
 
-    <section class="question-section" id="age" aria-labelledby="age-title">
-      <div class="section-heading">
-        <span class="question-number">02</span>
-        <div><p class="section-kicker">AGE COHORT &amp; SEX</p><h2 id="age-title">Hospitalisations by age and sex</h2><p class="section-deck">Counts are concentrated in working-age adults. Paired bars compare male and female hospitalisations on the same scale.</p></div>
-        <span class="chart-type">GROUPED BAR CHART <span>↗</span></span>
-      </div>
-      <div class="chart-frame age-frame">
-        <div class="chart-legend two-legend"><span><i class="legend-swatch male-swatch"></i>Male</span><span><i class="legend-swatch female-swatch"></i>Female</span><span class="legend-unit">HOSPITALISATIONS</span></div>
-        <svg id="age-chart" role="img" aria-label="Grouped horizontal bars of 2021 hospitalisations by age group and sex"></svg>
-      </div>
-      <p class="chart-note"><span class="note-mark">i</span> The sex-by-age table sums to 39,504, one below the published 2021 national total of 39,505. The source table does not allocate the difference.</p>
-    </section>
+      <section class="question-section" id="remoteness" aria-labelledby="remote-title">
+        <div class="section-heading">
+          <span class="question-number">04</span>
+          <div>
+            <p class="section-kicker">GEOGRAPHIC REMOTENESS</p>
+            <h2 id="remote-title">Hospitalisations by residential remoteness</h2>
+            <p class="section-deck">
+              Most hospitalisations were among residents of Major Cities. The published “Other or
+              unknown” category stays visible in the distribution.
+            </p>
+          </div>
+          <span class="chart-type">DONUT DISTRIBUTION <span>↗</span></span>
+        </div>
+        <div class="remote-layout">
+          <div class="chart-frame donut-frame">
+            <svg
+              id="remote-chart"
+              role="group"
+              aria-label="Interactive donut chart of 2021 hospitalisations by remoteness area"
+            ></svg>
+          </div>
+          <div class="remote-legend" id="remote-legend"></div>
+        </div>
+        <p class="chart-note">
+          <span class="note-mark">i</span> Counts are based on the recorded remoteness area. The
+          table reports “Other or unknown” separately from Major Cities, Regional and Remote.
+        </p>
+      </section>
 
-    <section class="question-section" id="users" aria-labelledby="users-title">
-      <div class="section-heading">
-        <span class="question-number">03</span>
-        <div><p class="section-kicker">ROAD-USER CATEGORIES</p><h2 id="users-title">Hospitalisations by road-user category</h2><p class="section-deck">Individual categories are sorted by hospitalisation count. Motorcyclists, pedal cyclists and pedestrians together account for nearly half of the 2021 total.</p></div>
-        <span class="chart-type">HORIZONTAL BAR CHART <span>↗</span></span>
-      </div>
-      <div class="chart-frame user-frame">
-        <div class="stacked-total"><span>ALL ROAD USERS · 2021</span><strong>39,505</strong></div>
-        <svg id="users-chart" role="img" aria-label="Sorted horizontal bars showing 2021 hospitalisations by road-user category"></svg>
-      </div>
-      <p class="chart-note"><span class="note-mark">i</span> Colours distinguish vulnerable road users, car occupants, other vehicle occupants, and other or unknown. Every source category is shown separately.</p>
-    </section>
+      <section class="question-section last-question" id="first-nations" aria-labelledby="fn-title">
+        <div class="section-heading">
+          <span class="question-number">05</span>
+          <div>
+            <p class="section-kicker">FIRST NATIONS ROAD SAFETY</p>
+            <h2 id="fn-title">First Nations and non-Indigenous counts by remoteness</h2>
+            <p class="section-deck">
+              The log-scaled dumbbell shows the published hospitalisation counts for First Nations
+              and non-Indigenous Australians.
+            </p>
+          </div>
+          <span class="chart-type">LOG DUMBBELL <span>↗</span></span>
+        </div>
+        <div class="chart-frame fn-frame">
+          <div class="chart-legend two-legend">
+            <span><i class="legend-swatch fn-swatch"></i>First Nations</span
+            ><span><i class="legend-swatch non-swatch"></i>Non-Indigenous</span
+            ><span class="legend-unit">LOG SCALE · COUNTS</span>
+          </div>
+          <svg
+            id="fn-chart"
+            role="group"
+            aria-label="Interactive log-scale dumbbell chart comparing hospitalisation counts by remoteness area and Indigenous status"
+          ></svg>
+          <div class="fn-table-wrap">
+            <table class="fn-table">
+              <thead>
+                <tr>
+                  <th>Remoteness</th>
+                  <th>First Nations</th>
+                  <th>Non-Indigenous</th>
+                </tr>
+              </thead>
+              <tbody id="fn-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="chart-note">
+          <span class="note-mark">i</span> Counts are not population-adjusted rates. Unknown-area
+          counts are residuals derived from each group’s annual total less the three published
+          areas. The two comparison-group totals sum to 38,975; 530 cases fall outside those two
+          totals.
+        </p>
+      </section>
 
-    <section class="question-section" id="remoteness" aria-labelledby="remote-title">
-      <div class="section-heading">
-        <span class="question-number">04</span>
-        <div><p class="section-kicker">GEOGRAPHIC REMOTENESS</p><h2 id="remote-title">Hospitalisations by residential remoteness</h2><p class="section-deck">Most hospitalisations were among residents of Major Cities. The published “Other or unknown” category stays visible in the distribution.</p></div>
-        <span class="chart-type">DONUT DISTRIBUTION <span>↗</span></span>
-      </div>
-      <div class="remote-layout">
-        <div class="chart-frame donut-frame"><svg id="remote-chart" role="group" aria-label="Interactive donut chart of 2021 hospitalisations by remoteness area"></svg></div>
-        <div class="remote-legend" id="remote-legend"></div>
-      </div>
-      <p class="chart-note"><span class="note-mark">i</span> Counts are based on the recorded remoteness area. The table reports “Other or unknown” separately from Major Cities, Regional and Remote.</p>
-    </section>
-
-    <section class="question-section last-question" id="first-nations" aria-labelledby="fn-title">
-      <div class="section-heading">
-        <span class="question-number">05</span>
-        <div><p class="section-kicker">FIRST NATIONS ROAD SAFETY</p><h2 id="fn-title">First Nations and non-Indigenous counts by remoteness</h2><p class="section-deck">The log-scaled dumbbell shows the published hospitalisation counts for First Nations and non-Indigenous Australians.</p></div>
-        <span class="chart-type">LOG DUMBBELL <span>↗</span></span>
-      </div>
-      <div class="chart-frame fn-frame">
-        <div class="chart-legend two-legend"><span><i class="legend-swatch fn-swatch"></i>First Nations</span><span><i class="legend-swatch non-swatch"></i>Non-Indigenous</span><span class="legend-unit">LOG SCALE · COUNTS</span></div>
-        <svg id="fn-chart" role="group" aria-label="Interactive log-scale dumbbell chart comparing hospitalisation counts by remoteness area and Indigenous status"></svg>
-        <div class="fn-table-wrap"><table class="fn-table"><thead><tr><th>Remoteness</th><th>First Nations</th><th>Non-Indigenous</th></tr></thead><tbody id="fn-table"></tbody></table></div>
-      </div>
-      <p class="chart-note"><span class="note-mark">i</span> Counts are not population-adjusted rates. Unknown-area counts are residuals derived from each group’s annual total less the three published areas. The two comparison-group totals sum to 38,975; 530 cases fall outside those two totals.</p>
-    </section>
-
-    <footer id="method" class="method-footer">
-      <div><p class="section-kicker">ABOUT THE DATA</p><h2>Read the counts in context.</h2></div>
-      <div class="method-copy"><p>These charts describe hospitalised road crash injury counts, not all crashes or population-adjusted risk. The national, state and territory, and First Nations workbooks report data from the Australian Institute of Health and Welfare National Hospital Morbidity Database.</p><p class="source-files">Source workbooks: <em>hospitalisation_injury_publication_sep2023.xlsx</em>; <em>state-and-territory-hospitalisation-injury-publication-2023.xlsx</em>; <em>First-Nations-hospitalised-injuries-2023.xlsx</em>.</p></div>
-      <div class="footer-stamp">ROAD / DATA <span>AUSTRALIA · 2012—2021</span></div>
-    </footer>
-  </main>
-  <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
-</body>
+      <footer id="method" class="method-footer">
+        <div>
+          <p class="section-kicker">ABOUT THE DATA</p>
+          <h2>Read the counts in context.</h2>
+        </div>
+        <div class="method-copy">
+          <p>
+            These charts describe hospitalised road crash injury counts, not all crashes or
+            population-adjusted risk. The national, state and territory, and First Nations workbooks
+            report data from the Australian Institute of Health and Welfare National Hospital
+            Morbidity Database.
+          </p>
+          <p class="source-files">
+            Source workbooks: <em>hospitalisation_injury_publication_sep2023.xlsx</em>;
+            <em>state-and-territory-hospitalisation-injury-publication-2023.xlsx</em>;
+            <em>First-Nations-hospitalised-injuries-2023.xlsx</em>.
+          </p>
+        </div>
+        <div class="footer-stamp">ROAD / DATA <span>AUSTRALIA · 2012—2021</span></div>
+      </footer>
+    </main>
+    <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+  </body>
 </html>
-
-
-
