@@ -18,6 +18,31 @@
   if (!nativeNavigation) animate(document.body, [{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}], {duration:380,easing:'cubic-bezier(.22,1,.36,1)'});
  }
  enter();
+ // Keep the navigation out of the way while scrolling down, and reveal it
+ // when the reader reverses direction to move back through the page.
+ const nav = document.querySelector('.topbar');
+ let lastY = window.scrollY;
+ let ticking = false;
+ function updateNavigation() {
+  const y = window.scrollY;
+  const delta = y - lastY;
+  if (y < 80) {
+   nav?.classList.add('nav-visible');
+   nav?.classList.remove('nav-hidden');
+  } else if (delta < -3) {
+   nav?.classList.add('nav-visible');
+   nav?.classList.remove('nav-hidden');
+  } else if (delta > 3) {
+   nav?.classList.add('nav-hidden');
+   nav?.classList.remove('nav-visible');
+  }
+  lastY = y;
+  ticking = false;
+ }
+ addEventListener('scroll', () => {
+  if (!ticking) { requestAnimationFrame(updateNavigation); ticking = true; }
+ }, {passive:true});
+ updateNavigation();
  addEventListener('pageshow', event => { if (event.persisted) enter(); });
  document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
