@@ -1,5 +1,13 @@
 /* Keep navigation visually anchored while the page content changes. */
 .topbar{view-transition-name:site-navigation}
+.topbar{position:fixed!important;top:0;left:50%;width:min(1160px,calc(100% - 56px));margin:0;transform:translate(-50%,0);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .24s ease;will-change:transform;z-index:1000}
+.topbar.nav-hidden{transform:translate(-50%,-115%);opacity:.94}
+.topbar.nav-visible{transform:translate(-50%,0);opacity:1}
+.masthead>.topbar{margin-bottom:76px}
+.section-deck,.chart-note,.method-footer p{color:#53657f}
+:root[data-theme="dark"] .section-deck,:root[data-theme="dark"] .chart-note,:root[data-theme="dark"] .method-footer p{color:#c0ccdc}
+:root[data-theme="dark"] .section-kicker{color:#56e3d0}
+body:not(.dashboard-page) .topbar{position:sticky}
 ::view-transition-old(root){animation:content-leave 180ms ease both}
 ::view-transition-new(root){animation:content-arrive 420ms cubic-bezier(.22,1,.36,1) both}
 ::view-transition-old(site-navigation){animation:nav-dissolve 160ms ease both}
