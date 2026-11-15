@@ -1,0 +1,30 @@
+.card { min-width: 0; }
+.card svg { display: block; width: 100%; height: auto; }
+.card svg text:not([fill]) { fill: var(--ink); }
+.axis-label,.value-label { font-size: 11px; }
+.gridline,.axis-line { stroke: var(--line); }
+.gridline { stroke-dasharray: 3 5; }
+.chart-note,.legend-unit { color: var(--ink-2); font-size: .86rem; }
+.combined-legend,.two-legend,#state-picker { display:flex; flex-wrap:wrap; gap:.55rem; margin:1rem 0; }
+.combined-legend button,#state-picker button,.data-table th button { background:var(--surface-2); border:1px solid var(--line); color:var(--ink); padding:.4rem .7rem; border-radius:.55rem; cursor:pointer; }
+.combined-legend button[aria-pressed=false] { opacity:.6; }
+#state-picker button[aria-pressed=true] { border-color:var(--brand); }
+.legend-swatch,.user-legend-item i,.remote-legend-item i { display:inline-block; width:.8rem; height:.8rem; border-radius:.2rem; margin-right:.4rem; }
+.male-swatch,.fn-swatch { background:#16826f; }
+.female-swatch,.non-swatch { background:#d96e4d; }
+.stacked-total,.remote-layout,.user-legend { display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+.donut-frame { flex:1 1 300px; }
+.remote-legend { flex:1 1 200px; }
+.user-legend-item strong,.remote-legend-item strong,.remote-legend-item small { margin-left:.55rem; }
+.remote-legend-item { padding:.65rem 0; border-bottom:1px solid var(--line); }
+.fn-table { width:100%; border-collapse:collapse; }
+.fn-table td,.fn-table th { text-align:left; padding:.45rem; border-bottom:1px solid var(--line); }
+#rank-bars a { display:grid; grid-template-columns:3rem minmax(0,1fr) 4.5rem; align-items:center; gap:.6rem; color:var(--ink); padding:.4rem; text-decoration:none; }
+#rank-bars a:hover,#rank-bars a:focus-visible { background:var(--surface-2); }
+#rank-bars i { height:1.3rem; border-radius:.25rem; background:linear-gradient(90deg,var(--brand),var(--brand-2)); }
+#rank-bars strong { text-align:right; font-variant-numeric:tabular-nums; }
+#state-stats { grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
+#tooltip,.explorer-tooltip { position:fixed; pointer-events:none; z-index:1000; background:#28354a; color:white; border-radius:.7rem; padding:.7rem .9rem; max-width:min(260px,90vw); }
+#tooltip { visibility:hidden; }
+#tooltip.visible { visibility:visible; opacity:1; }
+main > .card { margin:1rem 0; }

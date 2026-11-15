@@ -124,16 +124,16 @@ function initProgress() {
 function initTheme() {
     const btn = document.getElementById("theme-toggle");
     const saved = localStorage.getItem("dv-theme");
-    if (saved === "dark") document.body.classList.add("dark");
+    document.body.classList.toggle("light", saved === "light");
     if (!btn) return;
     const sync = () =>
-        (btn.textContent = document.body.classList.contains("dark") ? "☀︎ Light" : "☾ Dark");
+        (btn.textContent = document.body.classList.contains("light") ? "☾ Dark" : "☀︎ Light");
     sync();
     btn.addEventListener("click", () => {
-        document.body.classList.toggle("dark");
+        document.body.classList.toggle("light");
         localStorage.setItem(
             "dv-theme",
-            document.body.classList.contains("dark") ? "dark" : "light"
+            document.body.classList.contains("light") ? "light" : "dark"
         );
         sync();
         window.dispatchEvent(new Event("themechange"));

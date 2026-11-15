@@ -1,0 +1,19 @@
+/* Keep navigation visually anchored while the page content changes. */
+.topbar{view-transition-name:site-navigation}
+::view-transition-old(root){animation:content-leave 180ms ease both}
+::view-transition-new(root){animation:content-arrive 420ms cubic-bezier(.22,1,.36,1) both}
+::view-transition-old(site-navigation){animation:nav-dissolve 160ms ease both}
+::view-transition-new(site-navigation){animation:nav-appear 260ms ease both}
+@keyframes content-leave{to{opacity:0;transform:translateY(-8px)}}
+@keyframes content-arrive{from{opacity:0;transform:translateY(16px)}}
+@keyframes nav-dissolve{to{opacity:0}}
+@keyframes nav-appear{from{opacity:0}}
+.primary-nav a,.question-nav a,.state-picker button{transition:color .22s,background .22s,box-shadow .3s,transform .22s}
+.primary-nav a:hover,.state-picker button:hover{transform:translateY(-2px)}
+.primary-nav a:active,.question-nav a:active,.state-picker button:active{transform:scale(.97)}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ ::view-transition-old(root),::view-transition-new(root),::view-transition-old(site-navigation),::view-transition-new(site-navigation){animation:none}
+ .primary-nav a,.question-nav a,.state-picker button{transition:none;transform:none}
+}

@@ -1,117 +1,43 @@
-# Allen GameDV — The Console War
+# Australian road injury dashboard
 
-Interactive D3.js v7 dashboard on the **seventh-generation console war (2004–2008)** —
-Nintendo DS, Wii, Sony PSP, PS3 and Xbox 360 — plus a live snapshot of what the world
-is playing on Steam today.
+Interactive D3.js dashboard for hospitalised road crash injuries in Australia. The dashboard covers five questions and includes a State Explorer for comparing jurisdictions. Annual jurisdiction figures span 2012–2021; age, road-user, remoteness, and First Nations breakdowns show 2021.
 
-No build step. No installs. Pure HTML + CSS + D3 from CDN.
+## Run locally
 
----
+Open `index.html` in a browser. If local-file restrictions prevent scripts from loading, run a static server from this folder:
 
-## Run it
-
-Double-click **`START HERE.bat`**, or:
-
-```bash
-cd "Allen GameDV"
-python -m http.server 8100
-# open http://localhost:8100
+```powershell
+python -m http.server 8200
 ```
 
-Port **8100** is the games dashboard; the road safety folder uses **8200**, so both can
-run at once without clashing. If you ever see the wrong dashboard, it's browser cache —
-press **Ctrl+F5**.
+Then open `http://localhost:8200/`. The site has no build step. D3.js and Motion browser bundles are included under `road-data/vendor/`.
 
-Serving over HTTP is required — `d3.csv()` is blocked on `file://`. If you open the file
-directly the page shows an explanatory screen rather than silently empty charts.
+## Pages and charts
 
----
+- `index.html` — five-question dashboard: jurisdiction line chart, grouped age-and-sex bars, sorted road-user bars, remoteness donut, and log-scale First Nations dumbbell with a count table.
+- `platform.html` — State Explorer: annual bars, jurisdiction ranking, and a two-jurisdiction line comparison. Changing “Compare against” redraws only the line chart.
+- `about.html` — data interpretation, coverage notes, and links to the project Excel workbooks.
 
-## The five visualisations
+The charts are drawn as SVG with D3.js selections, scales, lines, and arcs. The dashboard includes chart tooltips and selectable jurisdictions, remoteness categories, and First Nations rows. A light/dark switch is shared across the pages and remembers the choice locally.
 
-**1. The console war race** — the centrepiece. Cumulative sales bars grow *continuously*
-(interpolated between years on a `requestAnimationFrame` loop, not snapped year to year),
-overtake each other, and swap rank live. A 👑 marks the leader, a banner fires when the
-lead changes, and era captions describe each real hardware launch. Play / pause / replay /
-scrub / speed control, and cumulative-vs-annual toggle.
+## Folder layout
 
-**2. Market split** — stacked area or lines, switchable between sales, cumulative, titles
-released and average review score. Crosshair tooltip compares all five platforms at once.
-**Has its own ▶ Play years control**: a sweep line moves across the chart and the area
-draws in behind it.
-
-**3. Genre heatmap** — genre × platform matrix showing each machine's personality.
-Switch the cell metric between sales, title count and average score. **Play** rebuilds the
-matrix cumulatively year by year so you can watch genres appear.
-
-**4. Score vs sales scatter** — 1,212 games, position by review score, size by units sold.
-Click legend entries to filter platforms; swap the Y axis to story length. **Play** pops
-games in as their release year arrives (22 games by 2004 → 1,212 by 2008).
-
-> The trend, heatmap and scatter share **one synchronised year clock** (`js/timeline.js`).
-> Press play on any of the three and all three animate together. Axis scales and row
-> ordering stay fixed during playback so nothing jumps around. `⟳ All` resets to the
-> full range.
-
-
-**5. Steam live** — top titles by concurrent players / owners / review count, with bar
-colour encoding positive-review percentage.
-
-**6. Platform Explorer** (`platform.html`) — the drill-down page. Pick any console to get
-its own profile: KPI cards (total software, titles, avg score, share of generation,
-best-selling game), an auto-written narrative computed from the data, sales-by-year bars,
-a genre donut, an ESRB audience split, a sortable top-20 games table, and a head-to-head
-cumulative race against any rival console you choose. Platform choice lives in the URL
-(`platform.html?platform=X360`) so links are shareable, and browser back/forward works.
-
-Reach it from the hero button, the nav, or by **clicking any bar in the console war race**.
-
----
-
-## Structure
-
-```
-Allen GameDV/
-├── index.html          main dashboard
-├── platform.html       per-console deep dive
-├── about.html          method, sources, limitations
-├── START HERE.bat      one-click launcher
-├── css/style.css       dark-first gaming theme, light mode, responsive
-├── js/data.js          shared loader + file:// guard
-├── js/timeline.js      shared year clock (trend/heatmap/scatter play in sync)
-├── js/ui.js            tooltip, svg scaffold, legends, theme, exports
-├── charts/race.js      the animated console war
-├── charts/charts.js    trend, heatmap, scatter, steam
-├── charts/platform.js  platform deep-dive page
-└── assets/             7 derived CSVs
+```text
+index.html                  dashboard
+platform.html               State Explorer
+about.html                  data and notes
+README.md                   this guide
+road-data/                  active dashboard scripts and styles
+  app.js                    five dashboard charts and interactions
+  explorer.js               State Explorer charts and interactions
+  data.js                   prepared chart data
+  vendor/                   bundled D3.js and Motion, with licenses
+assets/                     Question1.xlsx through Question5.xlsx
+charts/, css/, js/          earlier project implementation, retained for reference
 ```
 
----
+## Reading the data
 
-## Data — all real, nothing invented
+These are hospitalisation **counts**, not population-adjusted rates. The published Australia total may differ from the sum of reported jurisdictions. The age-by-sex rows sum to 39,504, one below the 2021 national total of 39,505. The remoteness chart includes “Other or unknown”. The First Nations unknown-area figures are residuals derived from group totals; the two reported group totals sum to 38,975, leaving 530 cases outside them.
 
-| Source | What it gives |
-|---|---|
-| [CORGIS Video Games](https://corgis-edu.github.io/corgis/csv/video_games/) | 1,212 titles, 2004–2008: sales, review scores, genre, publisher, playtime |
-| [SteamSpy API](https://steamspy.com/api.php) | 2,953 Steam titles: concurrent players, owner estimates, review ratios, price |
-
-Derived files in `assets/`: `platform_year.csv`, `genre_year_platform.csv`, `games.csv`,
-`publisher_year.csv`, `steam_games.csv`, `steam_publishers.csv`, `steam_price_buckets.csv`.
-
-Multi-genre strings are reduced to their primary genre. SteamSpy owner ranges are converted
-to midpoints.
-
-**Limitations:** CORGIS covers only 2004–2008 and skews toward Metacritic-covered titles.
-Steam owner counts are SteamSpy estimates, not Valve figures — treat as order-of-magnitude.
-The Steam data is a point-in-time snapshot, not a live feed.
-
----
-
-## Verified
-
-Served locally and tested in-browser: **zero JS console errors**. All charts populate
-(5 stacked layers, 40 heatmap cells, 1,212 scatter points, 15–25 Steam bars). The race was
-confirmed genuinely animating — bar widths measured growing across frames
-(`[580,178,0,0,0] → [580,253,102,23,7] → [580,333,282,258,102]`) with a real lead change
-and a final cumulative total of **609.8M**, matching the source data exactly. Every toggle,
-slider and legend filter exercised and working.
+The five assignment workbooks remain in `assets/`. The displayed chart values are in `road-data/data.js`; the dashboard lists the AIHW publication workbooks underlying those values. See `about.html` for coverage details.
