@@ -10,7 +10,7 @@ Open `index.html` in a browser. If local-file restrictions prevent scripts from 
 python -m http.server 8200
 ```
 
-Then open `http://localhost:8200/`. The site has no build step. D3.js and Motion browser bundles are included under `road-data/vendor/`.
+Then open `http://localhost:8200/`. The site has no build step. D3.js and Motion browser bundles are included under `js/vendor/`.
 
 ## Pages and charts
 
@@ -27,7 +27,7 @@ index.html                  dashboard
 platform.html               State Explorer
 about.html                  data and notes
 README.md                   this guide
-road-data/                  active dashboard scripts and styles
+js/ and css/                dashboard scripts and styles
   app.js                    five dashboard charts and interactions
   explorer.js               State Explorer charts and interactions
   data.js                   prepared chart data
@@ -40,4 +40,4 @@ charts/, css/, js/          earlier project implementation, retained for referen
 
 These are hospitalisation **counts**, not population-adjusted rates. The published Australia total may differ from the sum of reported jurisdictions. The age-by-sex rows sum to 39,504, one below the 2021 national total of 39,505. The remoteness chart includes “Other or unknown”. The First Nations unknown-area figures are residuals derived from group totals; the two reported group totals sum to 38,975, leaving 530 cases outside them.
 
-The five assignment workbooks remain in `assets/`. The displayed chart values are in `road-data/data.js`; the dashboard lists the AIHW publication workbooks underlying those values. See `about.html` for coverage details.
+The five assignment workbooks remain in `assets/`. The displayed chart values are in `js/road-data.js`; the dashboard lists the AIHW publication workbooks underlying those values. See `about.html` for coverage details.
