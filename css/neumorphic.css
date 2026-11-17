@@ -108,6 +108,58 @@ body {
 .question-number {
   color: var(--green);
 }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.story-conclusion {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: var(--ink);
+}
+.chart-finding {
+  margin: 16px 0 0;
+  padding: 0;
+  color: var(--ink);
+  line-height: 1.65;
+}
+.chart-finding strong {
+  color: var(--green);
+}
+.story-conclusion {
+  margin: 0 0 64px;
+  max-width: 900px;
+}
+.story-conclusion h2 {
+  margin: 8px 0 16px;
+}
+.story-conclusion p:not(.section-kicker) {
+  max-width: 780px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+.story-conclusion a {
+  color: var(--green);
+  font-weight: 700;
+}
+.explorer-cue {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--ink-soft);
+}
+:root[data-theme="dark"] .hero-actions .scroll-cue {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.28);
+}
+:root[data-theme="dark"] .hero-actions .explorer-cue {
+  background: #1c2a3a !important;
+  color: #edf3fb !important;
+  border-color: #52657c;
+}
 .scroll-cue {
   background: linear-gradient(120deg, #526c95, #218c7e);
   color: white;
