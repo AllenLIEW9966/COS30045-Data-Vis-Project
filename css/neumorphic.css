@@ -147,6 +147,24 @@ body {
   color: var(--green);
   font-weight: 700;
 }
+.method-footer .group-members {
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.method-footer .footer-stamp small {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  margin-top: 14px;
+  align-self: flex-end;
+  text-align: right;
+  white-space: normal;
+  color: var(--muted);
+  font: 400 11px/1.5 var(--body);
+  letter-spacing: normal;
+  text-transform: none;
+}
 .explorer-cue {
   background: transparent !important;
   color: var(--ink) !important;
