@@ -43,11 +43,9 @@
   font-size: 12px;
 }
 .about-main .method-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
 }
-.about-main .method-footer > a {
+.about-main .method-footer a {
   color: var(--green);
 }
 @media (max-width: 600px) {
