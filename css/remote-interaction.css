@@ -1,0 +1,156 @@
+.remote-legend-item {
+  width: 100%;
+  font: inherit;
+  color: var(--ink-soft);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  padding-inline: 12px;
+  transition:
+    background 0.18s,
+    box-shadow 0.18s,
+    transform 0.18s;
+}
+.remote-legend-item:hover {
+  background: #ffffff70;
+  transform: translateX(3px);
+}
+.remote-legend-item[aria-pressed="true"] {
+  background: #ffffff8a;
+  box-shadow:
+    inset 3px 3px 8px #c7cdd6,
+    inset -3px -3px 8px #fff;
+}
+.remote-legend-item:focus-visible,
+.fn-table button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+#remote-chart path[data-area] {
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    filter 0.2s,
+    stroke-width 0.2s;
+}
+#remote-chart path[data-area].is-dimmed {
+  opacity: 0.28;
+}
+#remote-chart path[data-area].is-selected {
+  stroke: #fff;
+  stroke-width: 5;
+  filter: drop-shadow(0 3px 5px #25324a70);
+}
+#remote-chart path[data-area].is-hovered {
+  stroke: #fff;
+  stroke-width: 4;
+  filter: drop-shadow(0 2px 4px #25324a66);
+}
+#remote-chart path[data-area]:focus-visible {
+  stroke: #25324a;
+  stroke-width: 5;
+}
+#fn-chart [data-area] {
+  transition:
+    opacity 0.2s,
+    filter 0.2s;
+}
+#fn-chart [data-area].is-dimmed {
+  opacity: 0.2;
+}
+#fn-chart line[data-area].is-selected {
+  stroke: #718b83;
+  stroke-width: 3;
+}
+#fn-chart line[data-area].is-hovered {
+  stroke: #718b83;
+  stroke-width: 3;
+}
+#fn-chart circle[data-area] {
+  cursor: pointer;
+}
+#fn-chart circle[data-area].is-selected {
+  filter: drop-shadow(0 0 5px #25324a99);
+  stroke: #fff;
+  stroke-width: 2;
+}
+#fn-chart circle[data-area].is-hovered {
+  filter: drop-shadow(0 0 5px #25324a99);
+  stroke: #fff;
+  stroke-width: 2;
+}
+#fn-chart circle[data-area]:focus-visible {
+  stroke: #25324a;
+  stroke-width: 3;
+}
+.fn-table button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.fn-table td:not(:first-child) button {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.fn-table tr {
+  cursor: pointer;
+}
+.fn-table tr.is-selected td {
+  background: #dce7e9;
+}
+.fn-frame {
+  position: relative;
+}
+.fn-point-tooltip {
+  position: absolute;
+  z-index: 5;
+  max-width: min(290px, calc(100% - 16px));
+  padding: 11px 15px;
+  background: #2c3a55;
+  color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 10px 22px #25324a44;
+  font: 600 12px/1.5 var(--body);
+  pointer-events: none;
+}
+.fn-point-tooltip[hidden] {
+  display: none;
+}
+.tooltip {
+  max-width: min(300px, calc(100vw - 16px));
+  font-size: 12px;
+  line-height: 1.5;
+}
+.series-tooltip {
+  width: min(290px, calc(100% - 16px));
+}
+.series-tooltip > div {
+  gap: 12px;
+}
+.series-tooltip > div span {
+  min-width: 0;
+}
+.series-tooltip > div b {
+  flex: none;
+}
+@media (max-width: 600px) {
+  .remote-legend-item {
+    padding-inline: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .remote-legend-item,
+  #remote-chart path[data-area],
+  #fn-chart [data-area] {
+    transition: none;
+  }
+}

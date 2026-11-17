@@ -1,142 +1,142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>About · Method &amp; Sources</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="css/style.css" />
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-    </head>
-    <body>
-        <div id="scroll-progress"></div>
-        <nav class="nav">
-            <div class="nav-inner">
-                <a class="brand" href="index.html"><span class="dot"></span> Allen GameDV</a>
-                <button id="nav-toggle" aria-label="Menu">☰</button>
-                <div class="nav-links" id="nav-links">
-                    <a href="index.html">Dashboard</a>
-                    <a href="platform.html">Platform explorer</a>
-                    <a href="about.html" class="active">About</a>
-                    <button id="theme-toggle">☀︎ Light</button>
-                </div>
-            </div>
-        </nav>
-
-        <header class="wrap" style="padding-top: 2.6rem">
-            <span class="eyebrow">Documentation</span>
-            <h1>Method, data &amp; design decisions</h1>
-            <p class="lede">
-                Where every number comes from, how it was reshaped, and why each chart was chosen.
-                All data is real — nothing was invented, estimated or filled in.
-            </p>
-        </header>
-
-        <section class="section wrap">
-            <div class="grid-2">
-                <div class="card">
-                    <h3>Data sources</h3>
-                    <ul class="insights">
-                        <li>
-                            <span class="num">A</span>
-                            <span
-                                ><strong>CORGIS Video Games dataset</strong> — 1,212 titles released
-                                2004–2008 across five platforms, with units sold, review score,
-                                genre, publisher, ESRB rating and HowLongToBeat playtimes.
-                                Fetched from <code>corgis-edu.github.io</code>.</span
-                            >
-                        </li>
-                        <li>
-                            <span class="num">B</span>
-                            <span
-                                ><strong>SteamSpy API</strong> — live snapshot of 2,953 Steam titles
-                                with concurrent players, owner estimates, review counts and price.
-                                Pulled from <code>steamspy.com/api.php</code>.</span
-                            >
-                        </li>
-                    </ul>
-                    <div class="story" style="margin-top: .8rem">
-                        The Steam figures are a <strong>point-in-time snapshot</strong>, not a live
-                        feed. Re-run the fetch script to refresh them.
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>Derived files</h3>
-                    <ul class="insights">
-                        <li><span class="num">1</span><span><code>platform_year.csv</code> — sales, titles, mean score and mean length per platform per year.</span></li>
-                        <li><span class="num">2</span><span><code>genre_year_platform.csv</code> — the three-way rollup driving the heatmap.</span></li>
-                        <li><span class="num">3</span><span><code>games.csv</code> — one row per title for the scatter plot.</span></li>
-                        <li><span class="num">4</span><span><code>publisher_year.csv</code> — top-10 publishers by total sales.</span></li>
-                        <li><span class="num">5</span><span><code>steam_games.csv</code>, <code>steam_publishers.csv</code>, <code>steam_price_buckets.csv</code> — Steam rollups.</span></li>
-                    </ul>
-                    <p style="font-size: .92rem; margin-top: .8rem">
-                        Multi-genre strings like <code>Action,Role-Playing (RPG)</code> are reduced
-                        to their primary (first) genre. Owner ranges such as
-                        <code>100,000,000 .. 200,000,000</code> are converted to their midpoint.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>Why the race animates properly</h3>
-                    <p style="font-size: .93rem">
-                        A bar race is only interesting if the bars actually move and change order.
-                        This one plots <strong>cumulative</strong> sales, which always grows, and
-                        interpolates <strong>between</strong> years on a <code>requestAnimationFrame</code>
-                        loop rather than snapping from one year to the next. The result is
-                        continuous motion at any speed.
-                    </p>
-                    <p style="font-size: .93rem">
-                        A crown marks the current leader, and when the lead changes hands a banner
-                        fires. Era captions are keyed to real hardware launches so the animation
-                        tells a story rather than just moving rectangles.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>Chart rationale</h3>
-                    <ul class="insights">
-                        <li><span class="num">1</span><span><strong>Bar race</strong> — rank change over time is the whole story of a console war.</span></li>
-                        <li><span class="num">2</span><span><strong>Stacked area / lines</strong> — stacked shows total market size, lines allow direct comparison. Toggle rather than pick one.</span></li>
-                        <li><span class="num">3</span><span><strong>Heatmap</strong> — the natural encoding for a genre × platform matrix.</span></li>
-                        <li><span class="num">4</span><span><strong>Scatter</strong> — the only honest way to show a weak correlation; a bar chart would hide the spread.</span></li>
-                        <li><span class="num">5</span><span><strong>Ranked bars with colour-encoded rating</strong> — two variables (popularity and reception) in one readable chart.</span></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 1.2rem">
-                <h3>Running it</h3>
-                <p style="font-size: .93rem">
-                    No build step. Because charts use <code>d3.csv()</code>, the folder must be
-                    served over HTTP — opening the file from disk shows a warning screen instead of
-                    empty charts.
-                </p>
-                <pre style="background: var(--surface-2); padding: .9rem 1rem; border-radius: 10px; overflow: auto; font-size: .88rem"><code>cd "Allen GameDV"
-python -m http.server 8000
-# open http://localhost:8000</code></pre>
-                <p style="font-size: .93rem">Or just double-click <code>START HERE.bat</code>.</p>
-            </div>
-
-            <div class="card" style="margin-top: 1.2rem">
-                <h3>Limitations</h3>
-                <p style="font-size: .93rem">
-                    The CORGIS dataset covers 2004–2008 only, so this is a study of the seventh
-                    console generation rather than the whole industry. It is also skewed toward
-                    titles that received Metacritic coverage, meaning very small releases are
-                    under-represented. Steam owner counts are SteamSpy estimates derived from
-                    review ratios, not figures published by Valve, and should be read as
-                    order-of-magnitude rather than exact.
-                </p>
-            </div>
-        </section>
-
-        <footer>
-            <div class="wrap">
-                <div><strong>Allen GameDV</strong> — Video Game Industry Dashboard</div>
-                <div>D3.js v7 · static site</div>
-            </div>
-        </footer>
-        <script src="js/ui.js"></script>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Sources and interpretation notes for the Australian road injury dashboard."
+    />
+    <title>Data &amp; notes | Road Data</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("road-data-theme") === "dark" ? "dark" : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/polish.css" />
+    <link rel="stylesheet" href="css/neumorphic.css" />
+    <link rel="stylesheet" href="css/navigation-motion.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/about.css" />
+    <script src="js/polish.js" defer></script>
+    <script src="js/neumorphic.js" defer></script>
+    <script src="js/navigation-motion.js" defer></script>
+    <script src="js/theme.js" defer></script>
+  </head>
+  <body class="about-page">
+    <div class="topbar page-width">
+      <a class="wordmark" href="index.html" aria-label="Road injury in Australia home"
+        ><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>ROAD<span
+          class="wordmark-light"
+          >/</span
+        >DATA</a
+      >
+      <div class="edition">
+        <span class="status-dot" aria-hidden="true"></span> AUSTRALIA
+        <span class="edition-divider">/</span> 2012—2021
+      </div>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="index.html">Dashboard</a
+        ><a href="platform.html">State explorer <span aria-hidden="true">↗</span></a
+        ><a href="about.html" aria-current="page"
+          >Data &amp; notes <span aria-hidden="true">↘</span></a
+        >
+        <a href="https://forms.gle/zvHwgczxYEDLrHeFA" target="_blank" rel="noopener noreferrer"
+          >User survey <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </div>
+    <main class="page-width about-main">
+      <header class="about-hero">
+        <p class="overline">SOURCES &amp; INTERPRETATION</p>
+        <h1>Read the counts<br />in context.</h1>
+        <p class="section-deck">
+          The charts describe hospitalised road crash injuries in Australia. Annual jurisdiction
+          counts cover 2012–2021; the other breakdowns show 2021.
+        </p>
+        <p class="section-deck">
+          The underlying BITRE publication covers 2011–2021. Our prepared Question 1 workbook begins
+          in 2012, so the website’s jurisdiction trend uses 2012–2021. This does not imply that 2011
+          is unavailable in the source.
+        </p>
+      </header>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">WHAT THE NUMBERS MEAN</p>
+        <h2>Hospitalisations are counts.</h2>
+        <p>
+          They do not represent every crash, every injury, or population-adjusted risk. Comparisons
+          between groups and places need population denominators before they can be interpreted as
+          rates.
+        </p>
+        <p>
+          The published Australia total is retained separately from state and territory figures; the
+          reported jurisdictions do not necessarily add to the national figure.
+        </p>
+      </section>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">COVERAGE NOTES</p>
+        <h2>Keep the source limits visible.</h2>
+        <ul>
+          <li>
+            The age-by-sex rows sum to 39,504, one below the published 2021 Australia total of
+            39,505.
+          </li>
+          <li>The remoteness distribution retains the published “Other or unknown” category.</li>
+          <li>
+            The First Nations chart compares counts. Its unknown-area values are residuals derived
+            from group totals less the three reported areas. The two group totals sum to 38,975; 530
+            cases fall outside them.
+          </li>
+        </ul>
+      </section>
+      <section class="chart-frame about-card">
+        <p class="section-kicker">PROJECT WORKBOOKS</p>
+        <h2>Assignment data files.</h2>
+        <ul class="workbook-list">
+          <li><a href="assets/Question1.xlsx">Question 1 workbook — jurisdiction trends</a></li>
+          <li><a href="assets/Question2.xlsx">Question 2 workbook — age and sex</a></li>
+          <li><a href="assets/Question3.xlsx">Question 3 workbook — road users</a></li>
+          <li><a href="assets/Question4.xlsx">Question 4 workbook — remoteness</a></li>
+          <li>
+            <a href="assets/Question5.xlsx">Question 5 workbook — First Nations comparison</a>
+          </li>
+        </ul>
+        <p>
+          The displayed charts use the prepared values in <code>js/road-data.js</code>. The
+          dashboard also names the AIHW publication workbooks behind those values.
+        </p>
+      </section>
+      <footer class="method-footer">
+        <div>
+          <p class="section-kicker">COS30045 DATA VISUALIZATION</p>
+          <h2>Group 17</h2>
+          <p class="group-members">
+            Allen Liew Kang Quan<br />Jee Zi Qian<br />Jezzper Kueh Zhe Yu
+          </p>
+        </div>
+        <div class="method-copy">
+          <p><a href="index.html">← Back to dashboard</a></p>
+          <p>
+            <a href="https://forms.gle/zvHwgczxYEDLrHeFA" target="_blank" rel="noopener noreferrer"
+              >User evaluation survey ↗</a
+            >
+          </p>
+        </div>
+        <div class="footer-stamp">
+          ROAD / DATA <span>AUSTRALIA · 2012—2021</span
+          ><small>Some website content and insights were developed with AI assistance.</small>
+        </div>
+      </footer>
+    </main>
+  </body>
 </html>

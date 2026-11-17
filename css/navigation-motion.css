@@ -1,0 +1,116 @@
+/* Keep navigation visually anchored while the page content changes. */
+.topbar {
+  view-transition-name: site-navigation;
+}
+.topbar {
+  position: fixed !important;
+  top: 0;
+  left: 50%;
+  width: min(1160px, calc(100% - 56px));
+  margin: 0;
+  transform: translate(-50%, 0);
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+  will-change: transform;
+  z-index: 1000;
+}
+.topbar.nav-hidden {
+  transform: translate(-50%, -115%);
+  opacity: 0.94;
+}
+.topbar.nav-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.masthead > .topbar {
+  margin-bottom: 76px;
+}
+.section-deck,
+.chart-note,
+.method-footer p {
+  color: #53657f;
+}
+:root[data-theme="dark"] .section-deck,
+:root[data-theme="dark"] .chart-note,
+:root[data-theme="dark"] .method-footer p {
+  color: #c0ccdc;
+}
+:root[data-theme="dark"] .section-kicker {
+  color: #56e3d0;
+}
+body:not(.dashboard-page) .topbar {
+  position: sticky;
+}
+::view-transition-old(root) {
+  animation: content-leave 180ms ease both;
+}
+::view-transition-new(root) {
+  animation: content-arrive 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-old(site-navigation) {
+  animation: nav-dissolve 160ms ease both;
+}
+::view-transition-new(site-navigation) {
+  animation: nav-appear 260ms ease both;
+}
+@keyframes content-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes content-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes nav-dissolve {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes nav-appear {
+  from {
+    opacity: 0;
+  }
+}
+.primary-nav a,
+.question-nav a,
+.state-picker button {
+  transition:
+    color 0.22s,
+    background 0.22s,
+    box-shadow 0.3s,
+    transform 0.22s;
+}
+.primary-nav a:hover,
+.state-picker button:hover {
+  transform: translateY(-2px);
+}
+.primary-nav a:active,
+.question-nav a:active,
+.state-picker button:active {
+  transform: scale(0.97);
+}
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(site-navigation),
+  ::view-transition-new(site-navigation) {
+    animation: none;
+  }
+  .primary-nav a,
+  .question-nav a,
+  .state-picker button {
+    transition: none;
+    transform: none;
+  }
+}
