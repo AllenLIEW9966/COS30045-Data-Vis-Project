@@ -339,7 +339,7 @@
         y: cy - 9,
         width: x(d.count) - left,
         height: 18,
-        fill: colors[d.group],
+        fill: i < 5 ? "var(--road-user-top)" : "var(--road-user-rest)",
         rx: 3,
         "data-tip": `${d.role}: ${fmt(d.count)} hospitalisations (${pct((d.count / total) * 100)})`,
         tabindex: "0",
