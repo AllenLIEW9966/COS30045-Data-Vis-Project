@@ -1,5 +1,11 @@
 :root {
   color-scheme: light;
+  --road-user-top: #526d95;
+  --road-user-rest: #aeb7c3;
+}
+:root[data-theme="dark"] {
+  --road-user-top: #7899c6;
+  --road-user-rest: #758397;
 }
 .theme-toggle {
   display: inline-flex;
